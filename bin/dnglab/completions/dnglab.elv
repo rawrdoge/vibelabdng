@@ -28,6 +28,7 @@ set edit:completion:arg-completer[dnglab] = {|@words|
             cand analyze 'Analyze raw image'
             cand process-raw 'process-raw'
             cand convert 'Convert raw image(s) into dng format'
+            cand reembed 'Re-embed an edited preview JPEG into an existing DNG (preserves raw/metadata)'
             cand ftpserver 'Convert raw image(s) into dng format'
             cand cameras 'List supported cameras'
             cand lenses 'List supported lenses'
@@ -91,6 +92,28 @@ set edit:completion:arg-completer[dnglab] = {|@words|
             cand --override 'Override existing files'
             cand -r 'Process input directory recursive'
             cand --recursive 'Process input directory recursive'
+            cand -v 'Print status for every file'
+            cand -h 'Print help'
+            cand --help 'Print help'
+        }
+        &'dnglab;reembed'= {
+            cand --dng 'Existing DNG file to re-embed preview into'
+            cand --preview 'Edited preview JPEG to embed'
+            cand --output 'Output DNG path (defaults to overwriting --dng)'
+            cand -c 'Compression for raw image'
+            cand --compression 'Compression for raw image'
+            cand --ljpeg92-predictor 'LJPEG-92 predictor'
+            cand --artist 'Set the artist tag'
+            cand --crop 'DNG default crop'
+            cand --dng-preview 'DNG include preview image'
+            cand --dng-thumbnail 'DNG include thumbnail image'
+            cand --embed-raw 'Re-embed the original raw file into DNG'
+            cand --seed 'Deterministic seed for reproducible output (use the same seed as the original conversion)'
+            cand -d 'Log level'
+            cand --loglevel 'Log level'
+            cand --compress 'Enable lossless compression (equivalent to -c)'
+            cand -f 'Override existing files'
+            cand --override 'Override existing files'
             cand -v 'Print status for every file'
             cand -h 'Print help'
             cand --help 'Print help'
@@ -185,6 +208,7 @@ set edit:completion:arg-completer[dnglab] = {|@words|
             cand analyze 'Analyze raw image'
             cand process-raw 'process-raw'
             cand convert 'Convert raw image(s) into dng format'
+            cand reembed 'Re-embed an edited preview JPEG into an existing DNG (preserves raw/metadata)'
             cand ftpserver 'Convert raw image(s) into dng format'
             cand cameras 'List supported cameras'
             cand lenses 'List supported lenses'
@@ -198,6 +222,8 @@ set edit:completion:arg-completer[dnglab] = {|@words|
         &'dnglab;help;process-raw'= {
         }
         &'dnglab;help;convert'= {
+        }
+        &'dnglab;help;reembed'= {
         }
         &'dnglab;help;ftpserver'= {
         }

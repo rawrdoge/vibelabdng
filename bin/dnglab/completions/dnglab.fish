@@ -35,6 +35,7 @@ complete -c dnglab -n "__fish_dnglab_needs_command" -s V -l version -d 'Print ve
 complete -c dnglab -n "__fish_dnglab_needs_command" -f -a "analyze" -d 'Analyze raw image'
 complete -c dnglab -n "__fish_dnglab_needs_command" -f -a "process-raw"
 complete -c dnglab -n "__fish_dnglab_needs_command" -f -a "convert" -d 'Convert raw image(s) into dng format'
+complete -c dnglab -n "__fish_dnglab_needs_command" -f -a "reembed" -d 'Re-embed an edited preview JPEG into an existing DNG (preserves raw/metadata)'
 complete -c dnglab -n "__fish_dnglab_needs_command" -f -a "ftpserver" -d 'Convert raw image(s) into dng format'
 complete -c dnglab -n "__fish_dnglab_needs_command" -f -a "cameras" -d 'List supported cameras'
 complete -c dnglab -n "__fish_dnglab_needs_command" -f -a "lenses" -d 'List supported lenses'
@@ -105,6 +106,32 @@ complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -s f -l override 
 complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -s r -l recursive -d 'Process input directory recursive'
 complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -s v -d 'Print status for every file'
 complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -s h -l help -d 'Print help'
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -l dng -d 'Existing DNG file to re-embed preview into' -r -F
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -l preview -d 'Edited preview JPEG to embed' -r -F
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -l output -d 'Output DNG path (defaults to overwriting --dng)' -r -F
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -s c -l compression -d 'Compression for raw image' -r -f -a "lossless\t''
+uncompressed\t''"
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -l ljpeg92-predictor -d 'LJPEG-92 predictor' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -l artist -d 'Set the artist tag' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -l crop -d 'DNG default crop' -r -f -a "best\t''
+activearea\t''
+none\t''"
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -l dng-preview -d 'DNG include preview image' -r -f -a "true\t''
+false\t''"
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -l dng-thumbnail -d 'DNG include thumbnail image' -r -f -a "true\t''
+false\t''"
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -l embed-raw -d 'Re-embed the original raw file into DNG' -r -f -a "true\t''
+false\t''"
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -l seed -d 'Deterministic seed for reproducible output (use the same seed as the original conversion)' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -s d -l loglevel -d 'Log level' -r -f -a "error\t''
+warn\t''
+info\t''
+debug\t''
+trace\t''"
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -l compress -d 'Enable lossless compression (equivalent to -c)'
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -s f -l override -d 'Override existing files'
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -s v -d 'Print status for every file'
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -s h -l help -d 'Print help'
 complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -s c -l compression -d 'Compression for raw image' -r -f -a "lossless\t''
 uncompressed\t''"
 complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -l ljpeg92-predictor -d 'LJPEG-92 predictor' -r
@@ -254,13 +281,14 @@ complete -c dnglab -n "__fish_dnglab_using_subcommand extract" -s r -l recursive
 complete -c dnglab -n "__fish_dnglab_using_subcommand extract" -s f -l override -d 'Override existing files'
 complete -c dnglab -n "__fish_dnglab_using_subcommand extract" -s v -d 'Print status for every file'
 complete -c dnglab -n "__fish_dnglab_using_subcommand extract" -s h -l help -d 'Print help'
-complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert ftpserver cameras lenses makedng gui extract help" -f -a "analyze" -d 'Analyze raw image'
-complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert ftpserver cameras lenses makedng gui extract help" -f -a "process-raw"
-complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert ftpserver cameras lenses makedng gui extract help" -f -a "convert" -d 'Convert raw image(s) into dng format'
-complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert ftpserver cameras lenses makedng gui extract help" -f -a "ftpserver" -d 'Convert raw image(s) into dng format'
-complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert ftpserver cameras lenses makedng gui extract help" -f -a "cameras" -d 'List supported cameras'
-complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert ftpserver cameras lenses makedng gui extract help" -f -a "lenses" -d 'List supported lenses'
-complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert ftpserver cameras lenses makedng gui extract help" -f -a "makedng" -d 'Lowlevel command to make a DNG file'
-complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert ftpserver cameras lenses makedng gui extract help" -f -a "gui" -d 'Start GUI (not implemented)'
-complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert ftpserver cameras lenses makedng gui extract help" -f -a "extract" -d 'Extract embedded original Raw from DNG'
-complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert ftpserver cameras lenses makedng gui extract help" -f -a "help" -d 'Print this message or the help of the given subcommand(s)'
+complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert reembed ftpserver cameras lenses makedng gui extract help" -f -a "analyze" -d 'Analyze raw image'
+complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert reembed ftpserver cameras lenses makedng gui extract help" -f -a "process-raw"
+complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert reembed ftpserver cameras lenses makedng gui extract help" -f -a "convert" -d 'Convert raw image(s) into dng format'
+complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert reembed ftpserver cameras lenses makedng gui extract help" -f -a "reembed" -d 'Re-embed an edited preview JPEG into an existing DNG (preserves raw/metadata)'
+complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert reembed ftpserver cameras lenses makedng gui extract help" -f -a "ftpserver" -d 'Convert raw image(s) into dng format'
+complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert reembed ftpserver cameras lenses makedng gui extract help" -f -a "cameras" -d 'List supported cameras'
+complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert reembed ftpserver cameras lenses makedng gui extract help" -f -a "lenses" -d 'List supported lenses'
+complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert reembed ftpserver cameras lenses makedng gui extract help" -f -a "makedng" -d 'Lowlevel command to make a DNG file'
+complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert reembed ftpserver cameras lenses makedng gui extract help" -f -a "gui" -d 'Start GUI (not implemented)'
+complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert reembed ftpserver cameras lenses makedng gui extract help" -f -a "extract" -d 'Extract embedded original Raw from DNG'
+complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert reembed ftpserver cameras lenses makedng gui extract help" -f -a "help" -d 'Print this message or the help of the given subcommand(s)'

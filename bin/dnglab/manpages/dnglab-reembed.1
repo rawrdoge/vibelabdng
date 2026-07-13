@@ -1,0 +1,72 @@
+.ie \n(.g .ds Aq \(aq
+.el .ds Aq '
+.TH dnglab-reembed 1  "dnglab-reembed " 
+.SH NAME
+dnglab\-reembed \- Re\-embed an edited preview JPEG into an existing DNG (preserves raw/metadata)
+.SH SYNOPSIS
+\fBdnglab\-reembed\fR <\fB\-\-dng\fR> <\fB\-\-preview\fR> [\fB\-\-output\fR] [\fB\-c\fR|\fB\-\-compression\fR] [\fB\-\-ljpeg92\-predictor\fR] [\fB\-\-artist\fR] [\fB\-\-crop\fR] [\fB\-\-dng\-preview\fR] [\fB\-\-dng\-thumbnail\fR] [\fB\-\-embed\-raw\fR] [\fB\-\-compress\fR] [\fB\-f\fR|\fB\-\-override\fR] [\fB\-\-seed\fR] [\fB\-h\fR|\fB\-\-help\fR] 
+.SH DESCRIPTION
+Re\-embed an edited preview JPEG into an existing DNG (preserves raw/metadata)
+.SH OPTIONS
+.TP
+\fB\-\-dng\fR=\fIdng\fR
+Existing DNG file to re\-embed preview into
+.TP
+\fB\-\-preview\fR=\fIpreview\fR
+Edited preview JPEG to embed
+.TP
+\fB\-\-output\fR=\fIoutput\fR
+Output DNG path (defaults to overwriting \-\-dng)
+.TP
+\fB\-c\fR, \fB\-\-compression\fR=\fIcompression\fR [default: lossless]
+Compression for raw image
+.br
+
+.br
+[\fIpossible values: \fRlossless, uncompressed]
+.TP
+\fB\-\-ljpeg92\-predictor\fR=\fIpredictor\fR [default: 1]
+LJPEG\-92 predictor
+.TP
+\fB\-\-artist\fR=\fIartist\fR
+Set the artist tag
+.TP
+\fB\-\-crop\fR=\fIcrop\fR [default: best]
+DNG default crop
+.br
+
+.br
+[\fIpossible values: \fRbest, activearea, none]
+.TP
+\fB\-\-dng\-preview\fR=\fIpreview\fR [default: true]
+DNG include preview image
+.br
+
+.br
+[\fIpossible values: \fRtrue, false]
+.TP
+\fB\-\-dng\-thumbnail\fR=\fIthumbnail\fR [default: true]
+DNG include thumbnail image
+.br
+
+.br
+[\fIpossible values: \fRtrue, false]
+.TP
+\fB\-\-embed\-raw\fR=\fIembedded\fR [default: true]
+Re\-embed the original raw file into DNG
+.br
+
+.br
+[\fIpossible values: \fRtrue, false]
+.TP
+\fB\-\-compress\fR
+Enable lossless compression (equivalent to \-c)
+.TP
+\fB\-f\fR, \fB\-\-override\fR
+Override existing files
+.TP
+\fB\-\-seed\fR=\fIseed\fR [default: ]
+Deterministic seed for reproducible output (use the same seed as the original conversion)
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Print help

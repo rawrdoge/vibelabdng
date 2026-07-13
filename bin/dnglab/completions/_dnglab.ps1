@@ -31,6 +31,7 @@ Register-ArgumentCompleter -Native -CommandName 'dnglab' -ScriptBlock {
             [CompletionResult]::new('analyze', 'analyze', [CompletionResultType]::ParameterValue, 'Analyze raw image')
             [CompletionResult]::new('process-raw', 'process-raw', [CompletionResultType]::ParameterValue, 'process-raw')
             [CompletionResult]::new('convert', 'convert', [CompletionResultType]::ParameterValue, 'Convert raw image(s) into dng format')
+            [CompletionResult]::new('reembed', 'reembed', [CompletionResultType]::ParameterValue, 'Re-embed an edited preview JPEG into an existing DNG (preserves raw/metadata)')
             [CompletionResult]::new('ftpserver', 'ftpserver', [CompletionResultType]::ParameterValue, 'Convert raw image(s) into dng format')
             [CompletionResult]::new('cameras', 'cameras', [CompletionResultType]::ParameterValue, 'List supported cameras')
             [CompletionResult]::new('lenses', 'lenses', [CompletionResultType]::ParameterValue, 'List supported lenses')
@@ -97,6 +98,29 @@ Register-ArgumentCompleter -Native -CommandName 'dnglab' -ScriptBlock {
             [CompletionResult]::new('--override', '--override', [CompletionResultType]::ParameterName, 'Override existing files')
             [CompletionResult]::new('-r', '-r', [CompletionResultType]::ParameterName, 'Process input directory recursive')
             [CompletionResult]::new('--recursive', '--recursive', [CompletionResultType]::ParameterName, 'Process input directory recursive')
+            [CompletionResult]::new('-v', '-v', [CompletionResultType]::ParameterName, 'Print status for every file')
+            [CompletionResult]::new('-h', '-h', [CompletionResultType]::ParameterName, 'Print help')
+            [CompletionResult]::new('--help', '--help', [CompletionResultType]::ParameterName, 'Print help')
+            break
+        }
+        'dnglab;reembed' {
+            [CompletionResult]::new('--dng', '--dng', [CompletionResultType]::ParameterName, 'Existing DNG file to re-embed preview into')
+            [CompletionResult]::new('--preview', '--preview', [CompletionResultType]::ParameterName, 'Edited preview JPEG to embed')
+            [CompletionResult]::new('--output', '--output', [CompletionResultType]::ParameterName, 'Output DNG path (defaults to overwriting --dng)')
+            [CompletionResult]::new('-c', '-c', [CompletionResultType]::ParameterName, 'Compression for raw image')
+            [CompletionResult]::new('--compression', '--compression', [CompletionResultType]::ParameterName, 'Compression for raw image')
+            [CompletionResult]::new('--ljpeg92-predictor', '--ljpeg92-predictor', [CompletionResultType]::ParameterName, 'LJPEG-92 predictor')
+            [CompletionResult]::new('--artist', '--artist', [CompletionResultType]::ParameterName, 'Set the artist tag')
+            [CompletionResult]::new('--crop', '--crop', [CompletionResultType]::ParameterName, 'DNG default crop')
+            [CompletionResult]::new('--dng-preview', '--dng-preview', [CompletionResultType]::ParameterName, 'DNG include preview image')
+            [CompletionResult]::new('--dng-thumbnail', '--dng-thumbnail', [CompletionResultType]::ParameterName, 'DNG include thumbnail image')
+            [CompletionResult]::new('--embed-raw', '--embed-raw', [CompletionResultType]::ParameterName, 'Re-embed the original raw file into DNG')
+            [CompletionResult]::new('--seed', '--seed', [CompletionResultType]::ParameterName, 'Deterministic seed for reproducible output (use the same seed as the original conversion)')
+            [CompletionResult]::new('-d', '-d', [CompletionResultType]::ParameterName, 'Log level')
+            [CompletionResult]::new('--loglevel', '--loglevel', [CompletionResultType]::ParameterName, 'Log level')
+            [CompletionResult]::new('--compress', '--compress', [CompletionResultType]::ParameterName, 'Enable lossless compression (equivalent to -c)')
+            [CompletionResult]::new('-f', '-f', [CompletionResultType]::ParameterName, 'Override existing files')
+            [CompletionResult]::new('--override', '--override', [CompletionResultType]::ParameterName, 'Override existing files')
             [CompletionResult]::new('-v', '-v', [CompletionResultType]::ParameterName, 'Print status for every file')
             [CompletionResult]::new('-h', '-h', [CompletionResultType]::ParameterName, 'Print help')
             [CompletionResult]::new('--help', '--help', [CompletionResultType]::ParameterName, 'Print help')
@@ -198,6 +222,7 @@ Register-ArgumentCompleter -Native -CommandName 'dnglab' -ScriptBlock {
             [CompletionResult]::new('analyze', 'analyze', [CompletionResultType]::ParameterValue, 'Analyze raw image')
             [CompletionResult]::new('process-raw', 'process-raw', [CompletionResultType]::ParameterValue, 'process-raw')
             [CompletionResult]::new('convert', 'convert', [CompletionResultType]::ParameterValue, 'Convert raw image(s) into dng format')
+            [CompletionResult]::new('reembed', 'reembed', [CompletionResultType]::ParameterValue, 'Re-embed an edited preview JPEG into an existing DNG (preserves raw/metadata)')
             [CompletionResult]::new('ftpserver', 'ftpserver', [CompletionResultType]::ParameterValue, 'Convert raw image(s) into dng format')
             [CompletionResult]::new('cameras', 'cameras', [CompletionResultType]::ParameterValue, 'List supported cameras')
             [CompletionResult]::new('lenses', 'lenses', [CompletionResultType]::ParameterValue, 'List supported lenses')
@@ -214,6 +239,9 @@ Register-ArgumentCompleter -Native -CommandName 'dnglab' -ScriptBlock {
             break
         }
         'dnglab;help;convert' {
+            break
+        }
+        'dnglab;help;reembed' {
             break
         }
         'dnglab;help;ftpserver' {

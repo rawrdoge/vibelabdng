@@ -165,13 +165,13 @@ pub async fn makedng_internal(options: &ArgMatches, dest_path: &Path) -> crate::
     if let Ok(decoder) = get_decoder(&rawfile) {
       if let Some(preview) = decoder.preview_image(&rawfile, &RawDecodeParams::default())? {
         let mut frame = dng.subframe(1);
-        frame.preview(&preview, 0.7)?;
+        frame.preview(&preview, 0.7, usize::MAX, usize::MAX)?;
         frame.finalize()?;
       }
     } else {
       let image = image::open(preview_input)?;
       let mut frame = dng.subframe(1);
-      frame.preview(&image, 0.7)?;
+      frame.preview(&image, 0.7, usize::MAX, usize::MAX)?;
       frame.finalize()?;
     }
   } else {
@@ -678,7 +678,7 @@ pub enum DngVersion {
 }
 
 impl DngVersion {
-  fn as_dng_value(&self) -> [u8; 4] {
+  pub fn as_dng_value(&self) -> [u8; 4] {
     match self {
       DngVersion::V1_0 => dng::DNG_VERSION_V1_0,
       DngVersion::V1_1 => dng::DNG_VERSION_V1_1,

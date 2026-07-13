@@ -14,12 +14,11 @@ pub mod cameras;
 pub mod convert;
 pub mod extract;
 pub mod filemap;
-pub mod ftpconv;
-pub mod gui;
 pub mod jobs;
 pub mod lenses;
 pub mod makedng;
 pub mod process_raw;
+pub mod reembed;
 
 const PKG_VERSION: &str = env!("CARGO_PKG_VERSION");
 const PKG_NAME: &str = env!("CARGO_PKG_NAME");

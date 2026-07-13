@@ -315,10 +315,15 @@ where
     Ok(())
   }
 
-  pub fn preview(&mut self, img: &DynamicImage, quality: f32) -> Result<()> {
+  pub fn preview(&mut self, img: &DynamicImage, quality: f32, max_w: usize, max_h: usize) -> Result<()> {
     let now = Instant::now();
-    let preview_img = if img.width() > 1024 {
-      DynamicImage::ImageRgb8(img.resize(1024, 768, FilterType::Nearest).to_rgb8())
+    // Scale down to fit within the requested bounding box, preserving aspect
+    // ratio. A fixed filter (Nearest) is used so the encoded JPEG is fully
+    // deterministic for a given input + quality (required for reproducible
+    // DNG output). If the image is already smaller, it is passed through.
+    let preview_img = if (img.width() as usize > max_w || img.height() as usize > max_h) && max_w > 0 && max_h > 0 {
+      let scaled = img.resize(max_w as u32, max_h as u32, FilterType::Nearest);
+      DynamicImage::ImageRgb8(scaled.to_rgb8())
     } else {
       DynamicImage::ImageRgb8(img.to_rgb8())
     };
@@ -764,7 +769,7 @@ mod tests {
     raw.finalize()?;
     dng.thumbnail(&full_image)?;
     let mut preview = dng.subframe(1);
-    preview.preview(&full_image, PREVIEW_JPEG_QUALITY)?;
+    preview.preview(&full_image, PREVIEW_JPEG_QUALITY, usize::MAX, usize::MAX)?;
     preview.finalize()?;
     dng.load_base_tags(&rawimage)?;
 

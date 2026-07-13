@@ -1,6 +1,7 @@
 use std::{
   ffi::OsStr,
-  io::{Cursor, Seek, Write},
+  fs::File,
+  io::{BufReader, Cursor, Seek, Write},
   path::Path,
   sync::Arc,
   thread::JoinHandle,
@@ -10,9 +11,9 @@ use std::{
 use image::DynamicImage;
 
 use crate::{
-  RawImage, RawImageData,
+  RawImage, RawImageData, RawlerError,
   decoders::{Decoder, RawDecodeParams, RawPhotometricInterpretation, WellKnownIFD, WhiteLevel},
-  dng::{DNG_VERSION_V1_4, PREVIEW_JPEG_QUALITY, original::OriginalCompressed, writer::DngWriter},
+  dng::{DNG_VERSION_V1_4, original::OriginalCompressed, writer::DngWriter},
   formats::tiff::Entry,
   imgop::{
     develop::RawDevelop,
@@ -22,6 +23,7 @@ use crate::{
   pixarray::PixF32,
   rawsource::RawSource,
   tags::{DngTag, ExifTag, TiffCommonTag},
+  imgop::Dim2,
 };
 
 use super::{CropMode, DngCompression, DngPhotometricConversion};
@@ -41,6 +43,20 @@ pub struct ConvertParams {
   pub software: String,
   pub index: usize,
   pub keep_mtime: bool,
+  /// DNG specification version written into the file (e.g. [1,4,0,0] for 1.4).
+  pub dng_version: [u8; 4],
+  /// Bounding box (width, height) for the medium preview (SubIFD1).
+  pub preview_medium: Dim2,
+  /// Bounding box (width, height) for the full preview (SubIFD2).
+  pub preview_full: Dim2,
+  /// JPEG quality (0..=100) used for embedded previews.
+  pub jpeg_quality: u8,
+  /// Deterministic seed. Used to derive any output bytes that are not a pure
+  /// function of the input (e.g. the ModifyDate tag), so identical
+  /// input + settings produce byte-identical output.
+  pub seed: String,
+  /// Emit a linear (demosaiced) DNG when supported by the decoder.
+  pub linear: bool,
 }
 
 /// Information surfaced from a completed conversion.
@@ -69,6 +85,12 @@ impl Default for ConvertParams {
       software: "DNGLab".into(),
       index: 0,
       keep_mtime: false,
+      dng_version: DNG_VERSION_V1_4,
+      preview_medium: Dim2::new(1024, 1024),
+      preview_full: Dim2::new(4000, 3000),
+      jpeg_quality: 92,
+      seed: String::new(),
+      linear: false,
     }
   }
 }
@@ -158,13 +180,25 @@ where
     rawimage.apply_scaling()?;
   }
 
-  let mut dng = DngWriter::new(dng, DNG_VERSION_V1_4)?;
+  let mut dng = DngWriter::new(dng, params.dng_version)?;
 
   // Write RAW image for subframe type 0
   // If no thumbnail should be written to root IFD, we need to put the raw image into
   // root IFD instead.
   let mut raw = if params.thumbnail { dng.subframe(0) } else { dng.subframe_on_root(0) };
-  raw.raw_image(&rawimage, params.crop, params.compression, params.photometric_conversion, params.predictor)?;
+  // A linear (demosaiced) DNG can only be emitted when the decoder already
+  // produced linear data (cpp == 3 / LinearRaw). If the user requested
+  // `--linear` but the decoder does not support it (e.g. a CFA Bayer NRW),
+  // fall back to the original (mosaic) representation instead of panicking in
+  // `RawImage::linearize()` (which is still unimplemented upstream).
+  let photometric_conversion = match params.photometric_conversion {
+    DngPhotometricConversion::Linear if !matches!(rawimage.photometric, RawPhotometricInterpretation::LinearRaw) => {
+      log::warn!("Linear DNG requested but decoder does not support it; falling back to original (mosaic) DNG");
+      DngPhotometricConversion::Original
+    }
+    other => other,
+  };
+  raw.raw_image(&rawimage, params.crop, params.compression, photometric_conversion, params.predictor)?;
   // Check for DNG raw IFD related tags
   if let Some(dng_raw_ifd) = decoder.ifd(WellKnownIFD::VirtualDngRawTags)? {
     raw.ifd_mut().copy(dng_raw_ifd.value_iter());
@@ -176,9 +210,14 @@ where
     match generate_preview(rawfile, decoder.as_ref(), &rawimage, &raw_params) {
       Ok(image) => {
         if params.preview {
-          let mut preview = dng.subframe(1);
-          preview.preview(&image, PREVIEW_JPEG_QUALITY)?;
-          preview.finalize()?;
+          // SubIFD1: medium preview, sized to the requested bounding box.
+          let mut preview_medium = dng.subframe(1);
+          preview_medium.preview(&image, params.jpeg_quality as f32 / 100.0, params.preview_medium.w, params.preview_medium.h)?;
+          preview_medium.finalize()?;
+          // SubIFD2: full preview, sized to the requested bounding box.
+          let mut preview_full = dng.subframe(2);
+          preview_full.preview(&image, params.jpeg_quality as f32 / 100.0, params.preview_full.w, params.preview_full.h)?;
+          preview_full.finalize()?;
         }
         if params.thumbnail {
           dng.thumbnail(&image)?;
@@ -233,7 +272,7 @@ where
     let original = handle
       .join()
       .map_err(|err| std::io::Error::new(std::io::ErrorKind::Other, format!("Failed to join compression thread: {:?}", err)))??;
-    dng.original_file(&original, original_filename)?;
+    dng.original_file(&original, &original_filename)?;
   }
 
   if let Some(artist) = &params.artist {
@@ -241,9 +280,32 @@ where
   }
   dng.root_ifd_mut().add_tag(TiffCommonTag::Software, &params.software);
 
-  dng
-    .root_ifd_mut()
-    .add_tag(ExifTag::ModifyDate, chrono::Local::now().format("%Y:%m:%d %H:%M:%S").to_string());
+  // Deterministic ModifyDate. The upstream code stamped `chrono::Local::now()`
+  // here, which made every output byte-different and broke reproducible DNG
+  // hashing. We instead derive a fixed timestamp from the seed + input name so
+  // that identical input + settings always produce byte-identical output.
+  // When no seed is provided we still emit a stable, input-derived value
+  // (FNV-1a over seed+filename) rather than a wall-clock time.
+  let mut hash: u64 = 0xcbf29ce484222325; // FNV-1a 64-bit offset basis
+  let write_byte = |h: &mut u64, b: u8| {
+    *h ^= b as u64;
+    *h = h.wrapping_mul(0x100000001b3); // FNV prime
+  };
+  for b in params.seed.as_bytes() {
+    write_byte(&mut hash, *b);
+  }
+  for b in original_filename.as_ref().as_bytes() {
+    write_byte(&mut hash, *b);
+  }
+  // Map the hash into a plausible, fixed date in the 2000..2038 range.
+  let year = 2000 + (hash % 38) as u32;
+  let month = 1 + ((hash >> 8) % 12) as u32;
+  let day = 1 + ((hash >> 16) % 28) as u32;
+  let hour = ((hash >> 24) % 24) as u32;
+  let minute = ((hash >> 32) % 60) as u32;
+  let second = ((hash >> 40) % 60) as u32;
+  let modify_date = format!("{:04}:{:02}:{:02} {:02}:{:02}:{:02}", year, month, day, hour, minute, second);
+  dng.root_ifd_mut().add_tag(ExifTag::ModifyDate, modify_date);
 
   dng.close()?;
 
@@ -278,4 +340,130 @@ fn generate_preview(rawfile: &RawSource, decoder: &dyn Decoder, rawimage: &RawIm
       Ok(image.to_dynamic_image().ok_or("failed to convert to dynamic image")?)
     }
   }
+}
+
+/// Re-embed an edited preview JPEG into an *existing* DNG, preserving the
+/// original raw pixels, stage data, metadata and IFD hierarchy.
+///
+/// This is the dnglab-native equivalent of the `betterembeds.lua` workflow:
+/// instead of blindly overwriting preview tags with exiftool (which produces
+/// a flat, non-Adobe-hierarchy preview), we re-read the DNG through the
+/// `DngDecoder`, keep its raw/metadata intact, and re-emit the file with the
+/// *edited* JPEG as the preview source. The result keeps the same
+/// deterministic, multi-resolution SubIFD1/SubIFD2 preview pyramid that the
+/// normal conversion produces (PRD Q8), so the embedded preview is
+/// byte-stable and hash-reproducible for a given seed.
+///
+/// Only the preview/thumbnail JPEGs change; the raw image and all other tags
+/// are carried over unchanged. The `seed` should match the one used at
+/// conversion time so the (untouched) raw bytes and ModifyDate stay
+/// byte-identical — otherwise the whole-file SHA-256 will change, which is
+/// expected and the caller (RawImport pipeline) re-hashes after re-embed.
+pub fn reembed_dng_file<W: Write + Seek + Send>(dng_in: &Path, preview_jpeg: &Path, dng_out: &mut W, params: &ConvertParams) -> crate::Result<()> {
+  let original_filename = dng_in
+    .file_name()
+    .and_then(OsStr::to_str)
+    .unwrap_or_default()
+    .to_string();
+
+  let rawfile = Arc::new(RawSource::new(dng_in)?);
+  let decoder = crate::get_decoder(&rawfile)?;
+  let raw_params = RawDecodeParams { image_index: params.index };
+  let mut rawimage = decoder.raw_image(&rawfile, &raw_params, false)?;
+  let metadata = decoder.raw_metadata(&rawfile, &raw_params)?;
+
+  log::info!(
+    "DNG re-embed: '{}', make: {}, model: {}, preview: '{}'",
+    original_filename,
+    rawimage.clean_make,
+    rawimage.clean_model,
+    preview_jpeg.display()
+  );
+
+  // Load the edited preview JPEG supplied by the external editor (e.g. Darktable).
+  let preview_img = image::open(preview_jpeg).map_err(|e| RawlerError::DecoderFailed(format!("Failed to open preview JPEG: {e}")))?;
+
+  let mut dng = DngWriter::new(dng_out, params.dng_version)?;
+
+  // Subframe 0: raw image, carried over verbatim from the source DNG.
+  let mut raw = if params.thumbnail { dng.subframe(0) } else { dng.subframe_on_root(0) };
+  let photometric_conversion = match params.photometric_conversion {
+    DngPhotometricConversion::Linear if !matches!(rawimage.photometric, RawPhotometricInterpretation::LinearRaw) => {
+      log::warn!("Linear DNG requested but decoder does not support it; falling back to original (mosaic) DNG");
+      DngPhotometricConversion::Original
+    }
+    other => other,
+  };
+  raw.raw_image(&rawimage, params.crop, params.compression, photometric_conversion, params.predictor)?;
+  if let Some(dng_raw_ifd) = decoder.ifd(WellKnownIFD::VirtualDngRawTags)? {
+    raw.ifd_mut().copy(dng_raw_ifd.value_iter());
+  }
+  raw.finalize()?;
+
+  // Re-emit the multi-resolution preview pyramid from the EDITED JPEG.
+  if params.preview {
+    let mut preview_medium = dng.subframe(1);
+    preview_medium.preview(&preview_img, params.jpeg_quality as f32 / 100.0, params.preview_medium.w, params.preview_medium.h)?;
+    preview_medium.finalize()?;
+    let mut preview_full = dng.subframe(2);
+    preview_full.preview(&preview_img, params.jpeg_quality as f32 / 100.0, params.preview_full.w, params.preview_full.h)?;
+    preview_full.finalize()?;
+  }
+  if params.thumbnail {
+    dng.thumbnail(&preview_img)?;
+  }
+
+  // Metadata carried over from the source DNG.
+  dng.load_base_tags(&rawimage)?;
+  dng.load_metadata(&metadata)?;
+  if !dng.root_ifd().contains(ExifTag::Orientation) {
+    dng.root_ifd_mut().add_tag(ExifTag::Orientation, rawimage.orientation.to_u16());
+  }
+  if let Some(dng_root_ifd) = decoder.ifd(WellKnownIFD::VirtualDngRootTags)? {
+    dng.root_ifd_mut().copy(dng_root_ifd.value_iter());
+  }
+  if let Some(tiff_root) = decoder.ifd(WellKnownIFD::Root)? {
+    dng.root_ifd_mut().copy(tiff_root.value_iter().filter(|(tag, _)| {
+      [TiffCommonTag::TimeCodes as u16, TiffCommonTag::FrameFrate as u16, TiffCommonTag::TStop as u16].contains(tag)
+    }));
+  }
+  if let Some(xpacket) = decoder.xpacket(&rawfile, &raw_params)? {
+    dng.xpacket(&xpacket)?;
+  }
+
+  // Preserve the embedded original raw (so the DNG stays self-contained).
+  if params.embedded {
+    let mut orig_stream = BufReader::new(File::open(dng_in)?);
+    let original = OriginalCompressed::compress(&mut orig_stream)?;
+    dng.original_file(&original, &original_filename)?;
+  }
+
+  if let Some(artist) = &params.artist {
+    dng.root_ifd_mut().add_tag(TiffCommonTag::Artist, artist);
+  }
+  dng.root_ifd_mut().add_tag(TiffCommonTag::Software, &params.software);
+
+  // Deterministic ModifyDate (same scheme as convert_raw_file).
+  let mut hash: u64 = 0xcbf29ce484222325;
+  let write_byte = |h: &mut u64, b: u8| {
+    *h ^= b as u64;
+    *h = h.wrapping_mul(0x100000001b3);
+  };
+  for b in params.seed.as_bytes() {
+    write_byte(&mut hash, *b);
+  }
+  for b in original_filename.as_bytes() {
+    write_byte(&mut hash, *b);
+  }
+  let year = 2000 + (hash % 38) as u32;
+  let month = 1 + ((hash >> 8) % 12) as u32;
+  let day = 1 + ((hash >> 16) % 28) as u32;
+  let hour = ((hash >> 24) % 24) as u32;
+  let minute = ((hash >> 32) % 60) as u32;
+  let second = ((hash >> 40) % 60) as u32;
+  let modify_date = format!("{:04}:{:02}:{:02} {:02}:{:02}:{:02}", year, month, day, hour, minute, second);
+  dng.root_ifd_mut().add_tag(ExifTag::ModifyDate, modify_date);
+
+  dng.close()?;
+  Ok(())
 }

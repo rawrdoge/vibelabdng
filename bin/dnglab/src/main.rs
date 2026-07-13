@@ -23,14 +23,24 @@ use tokio::runtime::Builder;
 const STACK_SIZE_MIB: usize = 4;
 
 fn main() -> AppResult {
-  let runtime = Builder::new_multi_thread()
-    .enable_all()
-    .thread_name("dnglab-tokio-worker")
-    .thread_stack_size(STACK_SIZE_MIB * 1024 * 1024)
-    .build()
-    .expect("Failed to build tokio runtime");
-
-  let result = runtime.block_on(main_async());
+  // Run the async entry point on a dedicated thread with a larger stack than
+  // the OS default main thread (1 MiB on Windows). Several subcommands (e.g.
+  // `reembed`) do non-trivial work directly on this stack, and the default
+  // size overflows for large DNGs / many clap arguments.
+  let handle = std::thread::Builder::new()
+    .name("dnglab-main".to_string())
+    .stack_size(32 * 1024 * 1024)
+    .spawn(|| {
+      let runtime = Builder::new_multi_thread()
+        .enable_all()
+        .thread_name("dnglab-tokio-worker")
+        .thread_stack_size(STACK_SIZE_MIB * 1024 * 1024)
+        .build()
+        .expect("Failed to build tokio runtime");
+      runtime.block_on(main_async())
+    })
+    .expect("Failed to spawn main thread");
+  let result = handle.join().expect("Main thread panicked");
   if let Err(err) = &result {
     eprintln!("Error: {}", err);
   }
@@ -77,13 +87,12 @@ async fn main_async() -> dnglab_lib::Result<()> {
   match matches.subcommand() {
     Some(("analyze", sc)) => analyze::analyze(sc).await,
     Some(("convert", sc)) => convert::convert(sc).await,
+        Some(("reembed", sc)) => reembed::reembed(sc),
     Some(("makedng", sc)) => makedng::makedng(sc).await,
     Some(("process-raw", sc)) => process_raw::process_raw(sc).await,
     Some(("extract", sc)) => extract::extract(sc).await,
-    Some(("ftpserver", sc)) => ftpconv::ftpserver(sc).await,
     Some(("lenses", sc)) => lenses::lenses(sc).await,
     Some(("cameras", sc)) => cameras::cameras(sc).await,
-    Some(("gui", sc)) => gui::gui(sc).await,
     _ => Err(AppError::InvalidCmdSwitch("Unknown subcommand was used".into())),
   }
 }

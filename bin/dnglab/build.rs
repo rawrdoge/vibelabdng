@@ -8,9 +8,19 @@ use clap_complete::{
 };
 
 fn main() -> std::io::Result<()> {
-  build_manpages()?;
-  build_completions()?;
-  Ok(())
+  // `clap_mangen`/`clap_complete` render manpages and shell completions with
+  // deep recursion. On Windows the default thread stack (1 MiB) is too small
+  // for the full command tree and overflows (STATUS_STACK_OVERFLOW). Run the
+  // generation on a thread with a large stack so the build always completes.
+  let handle = std::thread::Builder::new()
+    .stack_size(32 * 1024 * 1024)
+    .spawn(|| -> std::io::Result<()> {
+      build_manpages()?;
+      build_completions()?;
+      Ok(())
+    })
+    .expect("failed to spawn build-script thread");
+  handle.join().expect("build-script thread panicked")
 }
 
 fn build_completions() -> std::io::Result<()> {

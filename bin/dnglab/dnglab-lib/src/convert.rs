@@ -22,15 +22,20 @@ pub async fn convert(options: &ArgMatches) -> crate::Result<()> {
 
   let recursive = options.get_flag("recursive");
 
-  let proc = {
-    let in_path: &PathBuf = options
-      .get_one("INPUT")
-      .ok_or_else(|| AppError::InvalidCmdSwitch("INPUT not available".into()))?;
-    let out_path: &PathBuf = options
-      .get_one("OUTPUT")
-      .ok_or_else(|| AppError::InvalidCmdSwitch("OUTPUT not available".into()))?;
-    MapMode::new(in_path, out_path)?
-  };
+  // Resolve input/output: prefer the PRD named flags (--input/--output),
+  // fall back to the legacy positional args. At least one of each must be set.
+  let in_path: PathBuf = options
+    .get_one::<PathBuf>("input")
+    .cloned()
+    .or_else(|| options.get_one::<PathBuf>("INPUT_POS").cloned())
+    .ok_or_else(|| AppError::InvalidCmdSwitch("No input file given (use --input or positional)".into()))?;
+  let out_path: PathBuf = options
+    .get_one::<PathBuf>("output")
+    .cloned()
+    .or_else(|| options.get_one::<PathBuf>("OUTPUT_POS").cloned())
+    .ok_or_else(|| AppError::InvalidCmdSwitch("No output file given (use --output or positional)".into()))?;
+
+  let proc = MapMode::new(&in_path, &out_path)?;
 
   // List of jobs
   let mut jobs: Vec<Raw2DngJob> = Vec::new();
@@ -201,25 +206,49 @@ fn generate_job(entry: &FileMap, options: &ArgMatches, claimed: &mut HashSet<Pat
 
   let mut jobs = Vec::with_capacity(batch_count);
   for (i, out) in final_outputs.into_iter().enumerate() {
+    // Parse "WxH" preview size flags into Dim2.
+    let preview_medium = parse_size(options.get_one::<String>("preview_medium").map(String::as_str).unwrap_or("1024x1024"))?;
+    let preview_full = parse_size(options.get_one::<String>("preview_full").map(String::as_str).unwrap_or("4000x3000"))?;
+    let dng_version = options
+      .get_one::<crate::makedng::DngVersion>("dng_version")
+      .map(|v| v.as_dng_value())
+      .unwrap_or(rawler::dng::DNG_VERSION_V1_4);
+    // --compress is a no-op flag that asserts lossless compression (the default).
+    let compression = if options.get_flag("compress") {
+      rawler::dng::DngCompression::Lossless
+    } else {
+      *options
+        .get_one("compression")
+        .ok_or_else(|| AppError::InvalidCmdSwitch("compression has no default".into()))?
+    };
     let params = ConvertParams {
       predictor: *options
         .get_one("predictor")
         .ok_or_else(|| AppError::InvalidCmdSwitch("predictor has no default".into()))?,
       embedded: options.get_flag("embedded"),
-      photometric_conversion: Default::default(),
+      // --linear selects a demosaiced (linear) DNG when the decoder supports it.
+      photometric_conversion: if options.get_flag("linear") {
+        rawler::dng::DngPhotometricConversion::Linear
+      } else {
+        Default::default()
+      },
       crop: *options
         .get_one("crop")
         .ok_or_else(|| AppError::InvalidCmdSwitch("crop has no default".into()))?,
       preview: options.get_flag("preview"),
       thumbnail: options.get_flag("thumbnail"),
-      compression: *options
-        .get_one("compression")
-        .ok_or_else(|| AppError::InvalidCmdSwitch("compression has no default".into()))?,
+      compression,
       artist: options.get_one("artist").cloned(),
       software: format!("{} {}", "DNGLab", PKG_VERSION),
       index: if do_batch { i } else { index },
       apply_scaling: false,
       keep_mtime: options.get_flag("keep_mtime"),
+      dng_version,
+      preview_medium,
+      preview_full,
+      jpeg_quality: *options.get_one::<u8>("jpeg_quality").unwrap_or(&92),
+      seed: options.get_one::<String>("seed").cloned().unwrap_or_default(),
+      linear: options.get_flag("linear"),
     };
     jobs.push(Raw2DngJob {
       input: input.clone(),
@@ -229,6 +258,24 @@ fn generate_job(entry: &FileMap, options: &ArgMatches, claimed: &mut HashSet<Pat
     });
   }
   Ok(jobs)
+}
+
+/// Parse a "WxH" size string into a `Dim2`. Used for `--preview-medium` /
+/// `--preview-full`. Returns an error if the format is invalid.
+pub(crate) fn parse_size(s: &str) -> Result<rawler::imgop::Dim2> {
+  let parts: Vec<&str> = s.split('x').collect();
+  if parts.len() != 2 {
+    return Err(AppError::InvalidCmdSwitch(format!("Invalid size '{}', expected WxH", s)));
+  }
+  let w = parts[0]
+    .trim()
+    .parse::<u32>()
+    .map_err(|e| AppError::InvalidCmdSwitch(format!("Invalid width in '{}': {}", s, e)))? as usize;
+  let h = parts[1]
+    .trim()
+    .parse::<u32>()
+    .map_err(|e| AppError::InvalidCmdSwitch(format!("Invalid height in '{}': {}", s, e)))? as usize;
+  Ok(rawler::imgop::Dim2::new(w, h))
 }
 
 /// Decide how many files to convert in parallel.

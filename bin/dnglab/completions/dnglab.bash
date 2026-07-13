@@ -46,6 +46,9 @@ _dnglab() {
             dnglab,process-raw)
                 cmd="dnglab__process__raw"
                 ;;
+            dnglab,reembed)
+                cmd="dnglab__reembed"
+                ;;
             dnglab__help,analyze)
                 cmd="dnglab__help__analyze"
                 ;;
@@ -76,6 +79,9 @@ _dnglab() {
             dnglab__help,process-raw)
                 cmd="dnglab__help__process__raw"
                 ;;
+            dnglab__help,reembed)
+                cmd="dnglab__help__reembed"
+                ;;
             *)
                 ;;
         esac
@@ -83,7 +89,7 @@ _dnglab() {
 
     case "${cmd}" in
         dnglab)
-            opts="-d -v -h -V --loglevel --help --version analyze process-raw convert ftpserver cameras lenses makedng gui extract help"
+            opts="-d -v -h -V --loglevel --help --version analyze process-raw convert reembed ftpserver cameras lenses makedng gui extract help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -337,7 +343,7 @@ _dnglab() {
             return 0
             ;;
         dnglab__help)
-            opts="analyze process-raw convert ftpserver cameras lenses makedng gui extract help"
+            opts="analyze process-raw convert reembed ftpserver cameras lenses makedng gui extract help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -477,6 +483,20 @@ _dnglab() {
             return 0
             ;;
         dnglab__help__process__raw)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        dnglab__help__reembed)
             opts=""
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
@@ -635,6 +655,76 @@ _dnglab() {
                     ;;
                 --crop)
                     COMPREPLY=($(compgen -W "best activearea none" -- "${cur}"))
+                    return 0
+                    ;;
+                --loglevel)
+                    COMPREPLY=($(compgen -W "error warn info debug trace" -- "${cur}"))
+                    return 0
+                    ;;
+                -d)
+                    COMPREPLY=($(compgen -W "error warn info debug trace" -- "${cur}"))
+                    return 0
+                    ;;
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        dnglab__reembed)
+            opts="-c -f -d -v -h --dng --preview --output --compression --ljpeg92-predictor --artist --crop --dng-preview --dng-thumbnail --embed-raw --compress --override --seed --loglevel --help"
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                --dng)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --preview)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --output)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --compression)
+                    COMPREPLY=($(compgen -W "lossless uncompressed" -- "${cur}"))
+                    return 0
+                    ;;
+                -c)
+                    COMPREPLY=($(compgen -W "lossless uncompressed" -- "${cur}"))
+                    return 0
+                    ;;
+                --ljpeg92-predictor)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --artist)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --crop)
+                    COMPREPLY=($(compgen -W "best activearea none" -- "${cur}"))
+                    return 0
+                    ;;
+                --dng-preview)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                --dng-thumbnail)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                --embed-raw)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                --seed)
+                    COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
                 --loglevel)

@@ -180,6 +180,7 @@ pub fn create_app() -> Command {
         .arg(arg!(<INPUT> "Input file or directory").value_parser(clap::value_parser!(PathBuf)))
         .arg(arg!(<OUTPUT> "Output file or existing directory").value_parser(clap::value_parser!(PathBuf))),
     )
+    .subcommand(reembed_command())
     .subcommand(
       convert_base
         .clone()
@@ -341,4 +342,27 @@ Input files which are not mapped are ignored.",
         .arg(arg!(<INPUT> "Input file or directory").value_parser(clap::value_parser!(PathBuf)))
         .arg(arg!(<OUTPUT> "Output file or existing directory").value_parser(clap::value_parser!(PathBuf))),
     )
+}
+
+/// Build the `reembed` subcommand. Defined as a free function (rather than a
+/// `let` binding inside `create_app`) so the `Command` is constructed as a
+/// temporary and moved into `.subcommand(...)`, keeping `create_app`'s stack
+/// frame small enough for the default Windows main-thread stack.
+fn reembed_command() -> Command {
+  Command::new("reembed")
+    .about("Re-embed an edited preview JPEG into an existing DNG (preserves raw/metadata)")
+    .arg_required_else_help(true)
+    .arg(arg!(dng: --"dng" <dng> "Existing DNG file to re-embed preview into").required(true).value_parser(clap::value_parser!(PathBuf)))
+    .arg(arg!(preview: --"preview" <preview> "Edited preview JPEG to embed").required(true).value_parser(clap::value_parser!(PathBuf)))
+    .arg(arg!(output: --"output" <output> "Output DNG path (defaults to overwriting --dng)").required(false).value_parser(clap::value_parser!(PathBuf)))
+    .arg(arg!(compression: -c --"compression" <compression> "Compression for raw image").required(false).value_parser(value_parser!(DngCompression)).default_value("lossless"))
+    .arg(arg!(predictor: --"ljpeg92-predictor" <predictor> "LJPEG-92 predictor").required(false).value_parser(clap::value_parser!(u8).range(1..=7)).default_value("1"))
+    .arg(arg!(--"artist" <artist> "Set the artist tag").required(false).value_parser(NonEmptyStringValueParser::new()))
+    .arg(arg!(--"crop" <crop> "DNG default crop").required(false).value_parser(value_parser!(CropMode)).default_value("best"))
+    .arg(arg!(preview_enabled: --"dng-preview" <preview> "DNG include preview image").value_parser(ValueParser::bool()).required(false).default_value("true").default_missing_value("true"))
+    .arg(arg!(thumbnail_enabled: --"dng-thumbnail" <thumbnail> "DNG include thumbnail image").value_parser(ValueParser::bool()).required(false).default_value("true").default_missing_value("true"))
+    .arg(arg!(embedded: --"embed-raw" <embedded> "Re-embed the original raw file into DNG").value_parser(ValueParser::bool()).required(false).default_value("true").default_missing_value("true"))
+    .arg(arg!(compress: --"compress" "Enable lossless compression (equivalent to -c)").action(ArgAction::SetTrue))
+    .arg(arg!(-f --override "Override existing files").action(ArgAction::SetTrue))
+    .arg(arg!(seed: --"seed" <seed> "Deterministic seed for reproducible output (use the same seed as the original conversion)").required(false).default_value(""))
 }

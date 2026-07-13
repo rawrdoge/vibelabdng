@@ -1,3 +1,20 @@
+# vibelabdng (fork of DNGLab)
+
+This repository is a fork of [DNGLab](https://github.com/dnglab/dnglab), created
+to support the [autodngconverter](https://github.com/rawrdoge/autodngconverter)
+project. autodngconverter is a pipeline that converts camera RAW files to DNG
+and tracks them in a database. This fork adds a `reembed` subcommand that
+replaces the embedded preview of an existing DNG with an edited JPEG, which
+autodngconverter's Darktable plugin uses to push corrected previews back into
+already-converted files.
+
+The `reembed` feature is the reason this fork exists. Everything else tracks
+upstream DNGLab. The original LICENSE (LGPL-2.1) and AUTHORS file are kept
+intact, and all credit for the underlying converter belongs to Daniel
+Vogelbacher and the DNGLab contributors.
+
+---
+
 # DNGLab - A camera RAW to DNG file format converter
 
 [![CI](https://github.com/dnglab/dnglab/actions/workflows/ci.yaml/badge.svg)](https://github.com/dnglab/dnglab/actions/workflows/ci.yaml)
@@ -330,9 +347,6 @@ Please see our guide: [CONTRIBUTE_SAMPLES.md](CONTRIBUTE_SAMPLES.md).
 This project receives no support from camera manufacturers. Most of the development effort goes into understanding compression algorithms and file formats — largely through debugging.
 Avoiding panics is generally good practice (e.g. using `x.saturating_sub(y)` instead of `x - y`). But a panic on `x - y` points directly at a misunderstanding of the algorithm (or a corrupt file), whereas the saturating variant silently hides it — so the panicking version is often far more useful. Because maintainable, debuggable code takes priority over panic-freedom here, PRs whose only purpose is to keep a fuzzer happy are unlikely to be merged.
 If you need to process untrusted files in an environment that could be harmed by malformed input, or where panics/aborts are unacceptable, we recommend **not** using dnglab/rawler at all. Instead, ask your camera vendor for support, official libraries and documentation.
-
-## A note on AI-assisted contributions
-This project accepts contributions made with the help of AI. However, your PR description must clearly communicate that you fully understand the change, can answer questions about it, and are prepared to maintain the code in the future. When in doubt, it's very likely that your PR will be closed without further response.
 
 ## FAQ
 
