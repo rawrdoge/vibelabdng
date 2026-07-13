@@ -4,12 +4,13 @@ on:
   push:
     tags:
       - 'v*.*.*'
+      - 'v*.*alpha'
+      - 'v*.*beta'
 
 jobs:
   create_release:
     name: Create release
     runs-on: ubuntu-latest
-    # Note this. We are going to use that in further jobs.
     outputs:
       release_id: ${{ steps.create_release.outputs.id }}
     steps:
@@ -20,10 +21,9 @@ jobs:
           draft: true
           prerelease: false
 
-
   build:
     name: Rust build on ${{matrix.os}}
-    needs: create_release # we need to know the ID
+    needs: create_release
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -46,12 +46,12 @@ jobs:
 
         - os: windows-latest
           build-cmd: cargo build --release
-          pkg-cmd: cd target/release/ && 7z a dnglab-win-x64_${GITHUB_REF#refs/*/}.zip dnglab.exe
+          pkg-cmd: cd target/release/ && 7z a dnglab-win-x64_${GITHUB_REF_NAME}.zip dnglab.exe
           package-files: target/release/dnglab*.zip
 
         - os: macos-latest
           build-cmd: cargo build --release
-          pkg-cmd: cd target/release/ && 7z a dnglab-macos-arm64_${GITHUB_REF#refs/*/}.zip dnglab
+          pkg-cmd: cd target/release/ && 7z a dnglab-macos-arm64_${GITHUB_REF_NAME}.zip dnglab
           package-files: target/release/dnglab*.zip
 
     steps:
@@ -92,13 +92,3 @@ jobs:
           draft: true
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  #publish:
-  #  runs-on: ubuntu-latest
-  #  needs: [create_release, build]
-  #  steps:
-  #  - uses: eregon/publish-release@v1
-  #    env:
-  #      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  #    with:
-  #      release_id: ${{ needs.create_release.outputs.release_id }}
