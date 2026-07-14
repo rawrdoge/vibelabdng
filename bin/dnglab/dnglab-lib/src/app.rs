@@ -177,8 +177,12 @@ pub fn create_app() -> Command {
             .value_parser(clap::value_parser!(usize))
             .default_value("0"),
         )
-        .arg(arg!(<INPUT> "Input file or directory").value_parser(clap::value_parser!(PathBuf)))
-        .arg(arg!(<OUTPUT> "Output file or existing directory").value_parser(clap::value_parser!(PathBuf))),
+        // Named flags consumed by convert.rs (get_one("input")/get_one("output")).
+        .arg(arg!(input: --"input" <input> "Input file or directory").required(false).value_parser(clap::value_parser!(PathBuf)))
+        .arg(arg!(output: --"output" <output> "Output file or existing directory").required(false).value_parser(clap::value_parser!(PathBuf)))
+        // Positional fallbacks (convert.rs reads INPUT_POS/OUTPUT_POS).
+        .arg(arg!(INPUT_POS: <INPUT> "Input file or directory").required(false).value_parser(clap::value_parser!(PathBuf)))
+        .arg(arg!(OUTPUT_POS: <OUTPUT> "Output file or existing directory").required(false).value_parser(clap::value_parser!(PathBuf))),
     )
     .subcommand(reembed_command())
     .subcommand(
@@ -362,7 +366,7 @@ fn reembed_command() -> Command {
     .arg(arg!(preview_enabled: --"dng-preview" <preview> "DNG include preview image").value_parser(ValueParser::bool()).required(false).default_value("true").default_missing_value("true"))
     .arg(arg!(thumbnail_enabled: --"dng-thumbnail" <thumbnail> "DNG include thumbnail image").value_parser(ValueParser::bool()).required(false).default_value("true").default_missing_value("true"))
     .arg(arg!(embedded: --"embed-raw" <embedded> "Re-embed the original raw file into DNG").value_parser(ValueParser::bool()).required(false).default_value("true").default_missing_value("true"))
-    .arg(arg!(compress: --"compress" "Enable lossless compression (equivalent to -c)").action(ArgAction::SetTrue))
+    .arg(arg!(compress: --"compress" "Enable lossless compression (equivalent to -c)").action(ArgAction::SetTrue).default_value("false"))
     .arg(arg!(-f --override "Override existing files").action(ArgAction::SetTrue))
     .arg(arg!(seed: --"seed" <seed> "Deterministic seed for reproducible output (use the same seed as the original conversion)").required(false).default_value(""))
 }

@@ -206,15 +206,19 @@ fn generate_job(entry: &FileMap, options: &ArgMatches, claimed: &mut HashSet<Pat
 
   let mut jobs = Vec::with_capacity(batch_count);
   for (i, out) in final_outputs.into_iter().enumerate() {
-    // Parse "WxH" preview size flags into Dim2.
+    // Parse "WxH" preview size flags into Dim2. These flags are optional;
+    // fall back to dnglab's built-in defaults when not supplied (the `convert`
+    // subcommand does not expose them, and `get_one` is safe on missing keys).
     let preview_medium = parse_size(options.get_one::<String>("preview_medium").map(String::as_str).unwrap_or("1024x1024"))?;
     let preview_full = parse_size(options.get_one::<String>("preview_full").map(String::as_str).unwrap_or("4000x3000"))?;
     let dng_version = options
       .get_one::<crate::makedng::DngVersion>("dng_version")
       .map(|v| v.as_dng_value())
       .unwrap_or(rawler::dng::DNG_VERSION_V1_4);
-    // --compress is a no-op flag that asserts lossless compression (the default).
-    let compression = if options.get_flag("compress") {
+    // --compress is an optional no-op flag that asserts lossless compression
+    // (already the default). Read defensively so a missing flag never panics.
+    let compress_flag = options.get_one::<bool>("compress").copied().unwrap_or(false);
+    let compression = if compress_flag {
       rawler::dng::DngCompression::Lossless
     } else {
       *options
@@ -227,7 +231,7 @@ fn generate_job(entry: &FileMap, options: &ArgMatches, claimed: &mut HashSet<Pat
         .ok_or_else(|| AppError::InvalidCmdSwitch("predictor has no default".into()))?,
       embedded: options.get_flag("embedded"),
       // --linear selects a demosaiced (linear) DNG when the decoder supports it.
-      photometric_conversion: if options.get_flag("linear") {
+      photometric_conversion: if options.get_one::<bool>("linear").copied().unwrap_or(false) {
         rawler::dng::DngPhotometricConversion::Linear
       } else {
         Default::default()
@@ -248,7 +252,7 @@ fn generate_job(entry: &FileMap, options: &ArgMatches, claimed: &mut HashSet<Pat
       preview_full,
       jpeg_quality: *options.get_one::<u8>("jpeg_quality").unwrap_or(&92),
       seed: options.get_one::<String>("seed").cloned().unwrap_or_default(),
-      linear: options.get_flag("linear"),
+      linear: options.get_one::<bool>("linear").copied().unwrap_or(false),
     };
     jobs.push(Raw2DngJob {
       input: input.clone(),

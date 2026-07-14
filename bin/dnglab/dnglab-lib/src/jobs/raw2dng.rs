@@ -8,7 +8,6 @@ use chrono::Local;
 use log::debug;
 use rawler::{
   RawlerError,
-  decoders::RawDecodeParams,
   dng::convert::{ConvertParams, convert_raw_file},
 };
 use std::{
