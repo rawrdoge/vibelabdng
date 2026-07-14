@@ -86,6 +86,8 @@ set edit:completion:arg-completer[dnglab] = {|@words|
             cand --crop 'DNG default crop'
             cand -j 'Number of files to convert in parallel (0 = auto)'
             cand --jobs 'Number of files to convert in parallel (0 = auto)'
+            cand --input 'Input file or directory'
+            cand --output 'Output file or existing directory'
             cand -d 'Log level'
             cand --loglevel 'Log level'
             cand -f 'Override existing files'

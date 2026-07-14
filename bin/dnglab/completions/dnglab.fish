@@ -97,6 +97,8 @@ complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -l crop -d 'DNG d
 activearea\t''
 none\t''"
 complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -s j -l jobs -d 'Number of files to convert in parallel (0 = auto)' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -l input -d 'Input file or directory' -r -F
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -l output -d 'Output file or existing directory' -r -F
 complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -s d -l loglevel -d 'Log level' -r -f -a "error\t''
 warn\t''
 info\t''

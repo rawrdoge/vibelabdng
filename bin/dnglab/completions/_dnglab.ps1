@@ -92,6 +92,8 @@ Register-ArgumentCompleter -Native -CommandName 'dnglab' -ScriptBlock {
             [CompletionResult]::new('--crop', '--crop', [CompletionResultType]::ParameterName, 'DNG default crop')
             [CompletionResult]::new('-j', '-j', [CompletionResultType]::ParameterName, 'Number of files to convert in parallel (0 = auto)')
             [CompletionResult]::new('--jobs', '--jobs', [CompletionResultType]::ParameterName, 'Number of files to convert in parallel (0 = auto)')
+            [CompletionResult]::new('--input', '--input', [CompletionResultType]::ParameterName, 'Input file or directory')
+            [CompletionResult]::new('--output', '--output', [CompletionResultType]::ParameterName, 'Output file or existing directory')
             [CompletionResult]::new('-d', '-d', [CompletionResultType]::ParameterName, 'Log level')
             [CompletionResult]::new('--loglevel', '--loglevel', [CompletionResultType]::ParameterName, 'Log level')
             [CompletionResult]::new('-f', '-f', [CompletionResultType]::ParameterName, 'Override existing files')

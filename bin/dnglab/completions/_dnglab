@@ -88,6 +88,8 @@ _arguments "${_arguments_options[@]}" : \
 '--crop=[DNG default crop]:crop:(best activearea none)' \
 '-j+[Number of files to convert in parallel (0 = auto)]:N:_default' \
 '--jobs=[Number of files to convert in parallel (0 = auto)]:N:_default' \
+'--input=[Input file or directory]:input:_files' \
+'--output=[Output file or existing directory]:output:_files' \
 '-d+[Log level]:level:(error warn info debug trace)' \
 '--loglevel=[Log level]:level:(error warn info debug trace)' \
 '-f[Override existing files]' \
@@ -97,8 +99,8 @@ _arguments "${_arguments_options[@]}" : \
 '-v[Print status for every file]' \
 '-h[Print help]' \
 '--help[Print help]' \
-':INPUT -- Input file or directory:_files' \
-':OUTPUT -- Output file or existing directory:_files' \
+'::INPUT_POS -- Input file or directory:_files' \
+'::OUTPUT_POS -- Output file or existing directory:_files' \
 && ret=0
 ;;
 (reembed)
