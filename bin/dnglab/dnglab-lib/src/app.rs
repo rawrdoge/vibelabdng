@@ -177,6 +177,44 @@ pub fn create_app() -> Command {
             .value_parser(clap::value_parser!(usize))
             .default_value("0"),
         )
+        // DNG output flags that convert.rs actually consumes. Until these are
+        // registered here, convert.rs silently falls back to its built-in
+        // defaults and any settings passed by the Go service never reach the
+        // rendered DNG.
+        .arg(
+          arg!(dng_version: --"dng-version" <VERSION> "DNG specification version")
+            .required(false)
+            .default_value("1.4")
+            .value_parser(value_parser!(DngVersion)),
+        )
+        .arg(
+          arg!(preview_medium: --"preview-medium" <WxH> "Medium preview size WxH (e.g. 1024x1024)")
+            .required(false)
+            .default_value("1024x1024"),
+        )
+        .arg(
+          arg!(preview_full: --"preview-full" <WxH> "Full preview size WxH (e.g. 4000x3000)")
+            .required(false)
+            .default_value("4000x3000"),
+        )
+        .arg(
+          arg!(jpeg_quality: --"jpeg-quality" <QUALITY> "JPEG preview quality (0-100)")
+            .required(false)
+            .value_parser(clap::value_parser!(u8).range(0..=100))
+            .default_value("92"),
+        )
+        .arg(
+          arg!(linear: --"linear" <linear> "Write a linear (demosaiced) DNG")
+            .value_parser(ValueParser::bool())
+            .required(false)
+            .default_value("false")
+            .default_missing_value("false"),
+        )
+        .arg(
+          arg!(seed: --"seed" <seed> "Deterministic seed for reproducible output")
+            .required(false)
+            .default_value(""),
+        )
         // Named flags consumed by convert.rs (get_one("input")/get_one("output")).
         .arg(arg!(input: --"input" <input> "Input file or directory").required(false).value_parser(clap::value_parser!(PathBuf)))
         .arg(arg!(output: --"output" <output> "Output file or existing directory").required(false).value_parser(clap::value_parser!(PathBuf)))
