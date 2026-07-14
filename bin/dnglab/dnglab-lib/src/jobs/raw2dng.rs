@@ -10,13 +10,11 @@ use rawler::{
   RawlerError,
   decoders::RawDecodeParams,
   dng::convert::{ConvertParams, convert_raw_file},
-  rawsource::RawSource,
 };
 use std::{
   fmt::Display,
-  fs::{File, remove_file},
+  fs::remove_file,
   io::BufWriter,
-  time::SystemTime,
 };
 use std::{path::PathBuf, time::Instant};
 
@@ -52,18 +50,6 @@ impl Display for JobResult {
     }
     Ok(())
   }
-}
-
-pub(crate) fn copy_mtime_from_rawsource(rawfile: &RawSource, file: &File, fallback: Option<SystemTime>, params: &ConvertParams) -> Result<()> {
-  let decoder = rawler::get_decoder(rawfile)?;
-  let raw_params = RawDecodeParams { image_index: params.index };
-  let metadata = decoder.raw_metadata(rawfile, &raw_params)?;
-  if let Some(ts) = metadata.last_modified()?.or(fallback) {
-    file.set_modified(ts)?;
-    let datetime: chrono::DateTime<Local> = ts.into();
-    log::debug!("Set mtime for DNG file to {}", datetime.format("%d/%m/%Y %T"));
-  }
-  Ok(())
 }
 
 impl Raw2DngJob {

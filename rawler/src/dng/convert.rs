@@ -369,7 +369,7 @@ pub fn reembed_dng_file<W: Write + Seek + Send>(dng_in: &Path, preview_jpeg: &Pa
   let rawfile = Arc::new(RawSource::new(dng_in)?);
   let decoder = crate::get_decoder(&rawfile)?;
   let raw_params = RawDecodeParams { image_index: params.index };
-  let mut rawimage = decoder.raw_image(&rawfile, &raw_params, false)?;
+  let rawimage = decoder.raw_image(&rawfile, &raw_params, false)?;
   let metadata = decoder.raw_metadata(&rawfile, &raw_params)?;
 
   log::info!(
