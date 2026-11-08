@@ -85,14 +85,8 @@ async fn main_async() -> dnglab_lib::Result<()> {
     .map_err(|e| AppError::General(format!("Invalid fern configuration: {e}")))?;
 
   match matches.subcommand() {
-    Some(("analyze", sc)) => analyze::analyze(sc).await,
     Some(("convert", sc)) => convert::convert(sc).await,
-        Some(("reembed", sc)) => reembed::reembed(sc),
-    Some(("makedng", sc)) => makedng::makedng(sc).await,
-    Some(("process-raw", sc)) => process_raw::process_raw(sc).await,
-    Some(("extract", sc)) => extract::extract(sc).await,
-    Some(("lenses", sc)) => lenses::lenses(sc).await,
-    Some(("cameras", sc)) => cameras::cameras(sc).await,
+    Some(("reembed", sc)) => reembed::reembed(sc),
     _ => Err(AppError::InvalidCmdSwitch("Unknown subcommand was used".into())),
   }
 }

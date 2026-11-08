@@ -8,16 +8,10 @@ use rawler::{
 use thiserror::Error;
 //use log::debug;
 
-pub mod analyze;
 pub mod app;
-pub mod cameras;
 pub mod convert;
-pub mod extract;
 pub mod filemap;
 pub mod jobs;
-pub mod lenses;
-pub mod makedng;
-pub mod process_raw;
 pub mod reembed;
 
 const PKG_VERSION: &str = env!("CARGO_PKG_VERSION");

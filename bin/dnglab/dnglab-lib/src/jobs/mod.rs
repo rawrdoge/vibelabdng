@@ -4,8 +4,6 @@
 use async_trait::async_trait;
 use std::fmt::Debug;
 
-pub mod extractraw;
-pub mod process_raw;
 pub mod raw2dng;
 
 #[async_trait]

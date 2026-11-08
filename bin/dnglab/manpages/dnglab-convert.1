@@ -4,7 +4,7 @@
 .SH NAME
 dnglab\-convert \- Convert raw image(s) into dng format
 .SH SYNOPSIS
-\fBdnglab\-convert\fR [\fB\-c\fR|\fB\-\-compression\fR] [\fB\-\-ljpeg92\-predictor\fR] [\fB\-\-dng\-preview\fR] [\fB\-\-dng\-thumbnail\fR] [\fB\-\-embed\-raw\fR] [\fB\-\-artist\fR] [\fB\-\-keep\-mtime\fR] [\fB\-\-image\-index\fR] [\fB\-\-crop\fR] [\fB\-f\fR|\fB\-\-override\fR] [\fB\-r\fR|\fB\-\-recursive\fR] [\fB\-j\fR|\fB\-\-jobs\fR] [\fB\-\-input\fR] [\fB\-\-output\fR] [\fB\-h\fR|\fB\-\-help\fR] [\fIINPUT\fR] [\fIOUTPUT\fR] 
+\fBdnglab\-convert\fR [\fB\-c\fR|\fB\-\-compression\fR] [\fB\-\-ljpeg92\-predictor\fR] [\fB\-\-dng\-preview\fR] [\fB\-\-dng\-thumbnail\fR] [\fB\-\-embed\-raw\fR] [\fB\-\-artist\fR] [\fB\-\-keep\-mtime\fR] [\fB\-\-image\-index\fR] [\fB\-\-crop\fR] [\fB\-f\fR|\fB\-\-override\fR] [\fB\-r\fR|\fB\-\-recursive\fR] [\fB\-j\fR|\fB\-\-jobs\fR] [\fB\-\-dng\-version\fR] [\fB\-\-preview\-medium\fR] [\fB\-\-preview\-full\fR] [\fB\-\-jpeg\-quality\fR] [\fB\-\-linear\fR] [\fB\-\-seed\fR] [\fB\-\-input\fR] [\fB\-\-output\fR] [\fB\-h\fR|\fB\-\-help\fR] [\fIINPUT\fR] [\fIOUTPUT\fR] 
 .SH DESCRIPTION
 Convert raw image(s) into dng format
 .SH OPTIONS
@@ -68,6 +68,32 @@ Process input directory recursive
 .TP
 \fB\-j\fR, \fB\-\-jobs\fR=\fIN\fR [default: 0]
 Number of files to convert in parallel (0 = auto)
+.TP
+\fB\-\-dng\-version\fR=\fIVERSION\fR [default: 1.4]
+DNG specification version
+.br
+
+.br
+[\fIpossible values: \fRv1\-4, v1\-5, v1\-6]
+.TP
+\fB\-\-preview\-medium\fR=\fIWxH\fR [default: 1024x1024]
+Medium preview size WxH (e.g. 1024x1024)
+.TP
+\fB\-\-preview\-full\fR=\fIWxH\fR [default: 4000x3000]
+Full preview size WxH (e.g. 4000x3000)
+.TP
+\fB\-\-jpeg\-quality\fR=\fIQUALITY\fR [default: 92]
+JPEG preview quality (0\-100)
+.TP
+\fB\-\-linear\fR=\fIlinear\fR [default: false]
+Write a linear (demosaiced) DNG
+.br
+
+.br
+[\fIpossible values: \fRtrue, false]
+.TP
+\fB\-\-seed\fR=\fIseed\fR [default: ]
+Deterministic seed for reproducible output
 .TP
 \fB\-\-input\fR=\fIinput\fR
 Input file or directory

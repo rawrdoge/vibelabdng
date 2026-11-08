@@ -13,7 +13,7 @@ workspace = true
 [dependencies]
 anyhow = "1.0"
 chrono = "0.4"
-clap = { version = "4.4", features = ["cargo", "string"] }
+clap = { version = "4.4", features = ["cargo", "string", "derive"] }
 log = "0.4"
 rawler = { path = "../../../rawler", features = ["clap"] }
 image = { version = "0.25" }

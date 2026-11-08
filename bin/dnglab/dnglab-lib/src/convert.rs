@@ -212,7 +212,7 @@ fn generate_job(entry: &FileMap, options: &ArgMatches, claimed: &mut HashSet<Pat
     let preview_medium = parse_size(options.get_one::<String>("preview_medium").map(String::as_str).unwrap_or("1024x1024"))?;
     let preview_full = parse_size(options.get_one::<String>("preview_full").map(String::as_str).unwrap_or("4000x3000"))?;
     let dng_version = options
-      .get_one::<crate::makedng::DngVersion>("dng_version")
+      .get_one::<crate::app::DngVersion>("dng_version")
       .map(|v| v.as_dng_value())
       .unwrap_or(rawler::dng::DNG_VERSION_V1_4);
     // --compress is an optional no-op flag that asserts lossless compression
