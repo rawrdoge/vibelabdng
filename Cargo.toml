@@ -1,8 +1,7 @@
 [workspace]
 members = [
 	"bin/dnglab",
-	"rawler",
-	"embedftp"
+	"rawler"
 ]
 resolver = "2"
 

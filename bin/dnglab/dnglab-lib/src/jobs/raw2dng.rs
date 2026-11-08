@@ -54,6 +54,7 @@ impl Display for JobResult {
   }
 }
 
+#[allow(dead_code)]
 pub(crate) fn copy_mtime_from_rawsource(rawfile: &RawSource, file: &File, fallback: Option<SystemTime>, params: &ConvertParams) -> Result<()> {
   let decoder = rawler::get_decoder(rawfile)?;
   let raw_params = RawDecodeParams { image_index: params.index };

@@ -1,5 +1,6 @@
 // SPDX-License-Identifier: LGPL-2.1
 // Copyright 2021 Daniel Vogelbacher <daniel@chaospixel.com>
+// Forked and minified for autodngconverter — retains convert, reembed, cameras, lenses only
 
 use std::path::PathBuf;
 
@@ -12,14 +13,8 @@ use log::debug;
 use rawler::dng::{ApplyDngOpcodes, CropMode, DngCompression, DngVersion, MAX_JXL_DISTANCE, opcodes::OpcodeSelector};
 use rawler::imgop::{
   color::OutputSpace,
-  denoise::DenoiseStrength,
-  develop::{ProcessedImageFormat, ProcessingStep},
+  develop::ProcessingStep,
   sharpen::DEFAULT_SHARPEN,
-};
-
-use crate::makedng::{
-  CalibrationIlluminantArgParser, ColorMatrixArgParser, DngColorimetricReference, InputSourceUsageMap, LinearizationTableArgParser, WhiteBalanceInput,
-  WhitePointArgParser,
 };
 
 #[derive(Clone, Debug, Copy, Eq, PartialEq, PartialOrd, Ord)]
@@ -138,10 +133,7 @@ pub fn create_app() -> Command {
         .required(false)
         .value_parser(clap::value_parser!(PathBuf))
         .long_help(
-          "Directory with profile TOML files. All *.toml files in this directory are loaded.
-If not given, 'profile_path' from the dnglab configuration file is used. Otherwise profiles are loaded
-from the 'rawler/profiles' and 'dnglab/profiles' directories in the user configuration directory
-(e.g. ~/.config on Linux, ~/Library/Application Support on macOS, %APPDATA% on Windows).",
+          "Directory with profile TOML files. All *.toml files in this directory are loaded.\nIf not given, 'profile_path' from the dnglab configuration file is used. Otherwise profiles are loaded\nfrom the 'rawler/profiles' and 'dnglab/profiles' directories in the user configuration directory\n(e.g. ~/.config on Linux, ~/Library/Application Support on macOS, %APPDATA% on Windows).",
         ),
     )
     .arg(
@@ -150,21 +142,11 @@ from the 'rawler/profiles' and 'dnglab/profiles' directories in the user configu
         .required(false)
         .value_parser(clap::value_parser!(PathBuf))
         .long_help(
-          "dnglab configuration file. If not given, 'dnglab/config.toml' in the user configuration directory
-(e.g. ~/.config on Linux, ~/Library/Application Support on macOS, %APPDATA% on Windows) is used if it exists.
-Example:
-
-  version = 1
-  profile_path = \"profiles\"   # relative to the configuration file
-
-  [convert]
-  default_profile = \"builtin_latest\"",
+          "dnglab configuration file. If not given, 'dnglab/config.toml' in the user configuration directory\n(e.g. ~/.config on Linux, ~/Library/Application Support on macOS, %APPDATA% on Windows) is used if it exists.\nExample:\n\n  version = 1\n  profile_path = \"profiles\"   # relative to the configuration file\n\n  [convert]\n  default_profile = \"builtin_latest\"",
         ),
     )
-    .subcommand(analyze_command())
-    .subcommand(process_raw_command())
     .subcommand(convert_command())
-    .subcommand(ftpserver_command())
+    .subcommand(reembed_command())
     .subcommand(
       Command::new("cameras")
         .about("List supported cameras")
@@ -177,25 +159,18 @@ Example:
         .arg_required_else_help(false)
         .arg(arg!(markdown: --md "Markdown format output").action(ArgAction::SetTrue)),
     )
-    .subcommand(makedng_command())
-    .subcommand(Command::new("gui").about("Start GUI (not implemented)").arg_required_else_help(false))
-    .subcommand(extract_command())
 }
 
-/// Arguments shared by convert and ftpserver
+/// Arguments shared by convert
 fn convert_base_command() -> Command {
-  Command::new("dnglab")
+  Command::new("convert")
     .about("Convert raw image(s) into dng format")
     .arg(
       arg!(profile: -p --"profile" <name> "Convert profile name")
         .required(false)
         .value_parser(NonEmptyStringValueParser::new())
         .long_help(
-          "Convert profile to use for conversion. Built-in profiles are 'builtin_compat' (DNG 1.4.0), 'builtin_latest' (DNG 1.6.0),
-'builtin_jxl' (JPEG XL lossless, DNG 1.7.1) and 'builtin_archive'.
-If not given, 'convert.default_profile' from the dnglab configuration file is used.
-Otherwise no profile is used and the command line switches with their defaults apply.
-Command line switches override the values of the profile.",
+          "Convert profile to use for conversion. Built-in profiles are 'builtin_compat' (DNG 1.4.0), 'builtin_latest' (DNG 1.6.0),\n'builtin_jxl' (JPEG XL lossless, DNG 1.7.1) and 'builtin_archive'.\nIf not given, 'convert.default_profile' from the dnglab configuration file is used.\nOtherwise no profile is used and the command line switches with their defaults apply.\nCommand line switches override the values of the profile.",
         ),
     )
     .arg(
@@ -223,8 +198,7 @@ Command line switches override the values of the profile.",
         .value_parser(jxl_distance_parser)
         .default_value("0")
         .long_help(
-          "JPEG XL distance (0-25). 0 is lossless, larger values are lossy and give smaller files.
-Lossy compression applies OpcodeList1 to the image data.",
+          "JPEG XL distance (0-25). 0 is lossless, larger values are lossy and give smaller files.\nLossy compression applies OpcodeList1 to the image data.",
         ),
     )
     .arg(
@@ -318,293 +292,171 @@ Lossy compression applies OpcodeList1 to the image data.",
     .arg(arg!(-f --override "Override existing files").action(ArgAction::SetTrue))
 }
 
-/// Subcommand analyze
-fn analyze_command() -> Command {
-  Command::new("analyze")
-    .about("Analyze raw image")
-    .arg_required_else_help(true)
-    .arg(arg!(raw_pixel: --"raw-pixel").action(ArgAction::SetTrue))
-    .arg(arg!(full_pixel: --"full-pixel" "Write uncompressed full pixel data to STDOUT").action(ArgAction::SetTrue))
-    .arg(arg!(preview_pixel: --"preview-pixel" "Write uncompressed preview pixel data to STDOUT").action(ArgAction::SetTrue))
-    .arg(arg!(thumbnail_pixel: --"thumbnail-pixel" "Write uncompressed preview pixel data to STDOUT").action(ArgAction::SetTrue))
-    .arg(arg!(raw_checksum: --"raw-checksum" "Write MD5 checksum of raw pixels to STDOUT").action(ArgAction::SetTrue))
-    .arg(arg!(full_checksum: --"full-checksum" "Write MD5 checksum of full pixels to STDOUT").action(ArgAction::SetTrue))
-    .arg(arg!(preview_checksum: --"preview-checksum" "Write MD5 checksum of preview pixels to STDOUT").action(ArgAction::SetTrue))
-    .arg(arg!(thumbnail_checksum: --"thumbnail-checksum" "Write MD5 checksum of thumbnail pixels to STDOUT").action(ArgAction::SetTrue))
-    .arg(arg!(srgb: --srgb "Write sRGB 16-bit TIFF to STDOUT").action(ArgAction::SetTrue))
-    .arg(arg!(meta: --meta "Write metadata to STDOUT").action(ArgAction::SetTrue))
-    .arg(arg!(structure: --structure "Write file structure to STDOUT").action(ArgAction::SetTrue))
-    .arg(arg!(summary: --summary "Write summary information for file to STDOUT").action(ArgAction::SetTrue))
-    .arg(arg!(camera_profiles: --"camera-profiles" "Write camera profiles to STDOUT (plain text, JSON or YAML)").action(ArgAction::SetTrue))
-    .arg(arg!(json: --json "Format metadata as JSON").action(ArgAction::SetTrue))
-    .arg(arg!(yaml: --yaml "Format metadata as YAML").action(ArgAction::SetTrue))
-    .arg(arg!(<FILE> "Input file").value_parser(clap::value_parser!(PathBuf)))
-}
-
-/// Subcommand process-raw
-fn process_raw_command() -> Command {
-  Command::new("process-raw")
-    .arg(remove_dng_opcodes_arg())
-    .arg(
-      arg!(--"artist" <artist> "Set the artist tag")
-        .required(false)
-        .value_parser(NonEmptyStringValueParser::new()),
-    )
-    .arg(
-      arg!(keep_mtime: --"keep-mtime" <keepmtime> "Keep mtime, read from EXIF with fallback to original file mtime")
-        .value_parser(ValueParser::bool())
-        .required(false)
-        .default_value("false")
-        .default_missing_value("false"),
-    )
-    .arg(
-      arg!(index: --"image-index" <index> "Select a specific image index (or 'all') if file is a image container")
-        .required(false)
-        .default_value("0"),
-    )
-    .arg(
-      arg!(--"crop" <crop> "Crop of the image: DefaultCrop (best), ActiveArea or none")
-        .required(false)
-        .value_parser(value_parser!(CropMode))
-        .default_value("best"),
-    )
-    .arg(
-      arg!(crop_transparent: --"crop-transparent" "Crop to the largest rectangle without transparent pixels of the DNG transparency mask")
-        .action(ArgAction::SetTrue),
-    )
-    .arg(
-      arg!(--"format" <format> "Output image format, defaults to the OUTPUT file extension or tif")
-        .required(false)
-        .value_parser(value_parser!(ProcessedImageFormat)),
-    )
-    .arg(
-      arg!(color_space: --"color-space" <space> "Color space of the image")
-        .required(false)
-        .value_parser(value_parser!(OutputSpace))
-        .default_value("srgb"),
-    )
-    .arg(
-      arg!(jpeg_quality: --"jpeg-quality" <quality> "JPEG quality (1-100)")
-        .required(false)
-        .value_parser(clap::value_parser!(u8).range(1..=100))
-        .default_value("94"),
-    )
-    .arg(
-      arg!(denoise_luma: --"denoise-luma" <strength>)
-        .help(format!(
-          "Strength of the luma noise reduction (0-{}), 0 is off, 1 is a full reduction [default: {}]",
-          MAX_DENOISE_STRENGTH,
-          DenoiseStrength::default().luma
-        ))
-        .required(false)
-        .value_parser(denoise_strength_parser),
-    )
-    .arg(
-      arg!(denoise_chroma: --"denoise-chroma" <strength>)
-        .help(format!(
-          "Strength of the chroma noise reduction (0-{}), 0 is off, 1 is a full reduction [default: {}]",
-          MAX_DENOISE_STRENGTH,
-          DenoiseStrength::default().chroma
-        ))
-        .required(false)
-        .value_parser(denoise_strength_parser),
-    )
-    .arg(
-      arg!(sharpen: --sharpen <strength>)
-        .help(format!(
-          "Strength of the sharpening (0-{}), 0 is off, 1 is the classic Laplacian filter [default: {}]",
-          MAX_SHARPEN_STRENGTH, DEFAULT_SHARPEN
-        ))
-        .required(false)
-        .value_parser(sharpen_strength_parser),
-    )
-    .arg(
-      arg!(exposure: --exposure <EV> "Change the exposure by this value in EV, e.g. -1.2. A negative value keeps white [default: 0]")
-        .required(false)
-        .allow_negative_numbers(true)
-        .value_parser(exposure_parser),
-    )
-    .arg(arg!(auto_exposure: --"auto-exposure" "Correct the exposure by an estimate from the image, --exposure is added to it").action(ArgAction::SetTrue))
-    .arg(steps_arg(
-      "steps",
-      "steps",
-      "Apply only these processing steps of the rendering, as comma separated list. Without it the default steps are applied",
-    ))
-    .arg(steps_arg(
-      "skip_steps",
-      "skip-steps",
-      "Skip these processing steps of the rendering, as comma separated list (e.g. tonecurve,denoise,sharpen). Takes priority over --steps",
-    ))
-    .arg(arg!(-f --override "Override existing files").action(ArgAction::SetTrue))
-    .arg(arg!(-r --recursive "Process input directory recursive").action(ArgAction::SetTrue))
-    .arg(arg!(<INPUT> "Input file or directory").value_parser(clap::value_parser!(PathBuf)))
-    .arg(arg!(<OUTPUT> "Output file or existing directory").value_parser(clap::value_parser!(PathBuf)))
-}
-
 /// Subcommand convert
 fn convert_command() -> Command {
   convert_base_command()
-    .name("convert")
-    .arg(arg!(-r --recursive "Process input directory recursive").action(ArgAction::SetTrue))
-    .arg(
-      arg!(jobs: -j --jobs <N> "Number of files to convert in parallel (0 = auto)")
-        .required(false)
-        .value_parser(clap::value_parser!(usize))
-        .default_value("0"),
-    )
+    .subcommand(Command::new("raw")
+      .about("Convert raw images to DNG (deprecated: same as convert)")
+      .visible_alias("r")
+      .arg(arg!(<INPUT> "Input file or directory").value_parser(clap::value_parser!(PathBuf)))
+      .arg(arg!(<OUTPUT> "Output file or existing directory").value_parser(clap::value_parser!(PathBuf))))
     .arg(arg!(<INPUT> "Input file or directory").value_parser(clap::value_parser!(PathBuf)))
     .arg(arg!(<OUTPUT> "Output file or existing directory").value_parser(clap::value_parser!(PathBuf)))
-}
-
-/// Subcommand ftpserver
-fn ftpserver_command() -> Command {
-  convert_base_command()
-    .name("ftpserver")
     .arg(
-      arg!(ftp_port: --port <port> "FTP listen port")
-        .required(false)
-        .default_value("2121")
-        .value_parser(clap::value_parser!(u16)),
+      arg!(output_colorspace: --"colorspace" <COLORSPACE> "Colorspace of resulting DNG image")
+        .value_parser(value_parser!(OutputSpace))
+        .default_value("srgb")
+        .long_help("The colorspace the resulting DNG file will have. This includes setting the color matrices if not done in the profile."),
     )
-    .arg(arg!(ftp_listen: --listen <addr> "FTP listen address").required(false).default_value("0.0.0.0"))
+    .arg(steps_arg("render_steps", "render-steps", "Render pipeline steps"))
+    .arg(steps_arg("hide_steps", "hide-steps", "Hide render pipeline steps"))
     .arg(
-      arg!(keep_orig: --"keep-original" <keep> "Keep original raw")
-        .value_parser(ValueParser::bool())
+      arg!(denoise: --denoise <strength> "Amount of denoising applied to rendered image (0.00..=4.00)")
         .required(false)
-        .default_value("true")
-        .default_missing_value("true"),
-    )
-    .arg(arg!(<OUTPUT> "Output file or existing directory").value_parser(clap::value_parser!(PathBuf)))
-}
-
-/// Subcommand makedng
-fn makedng_command() -> Command {
-  Command::new("makedng")
-    .about("Lowlevel command to make a DNG file")
-    .arg_required_else_help(true)
-    .arg(arg!(OUTPUT: -o --"output" <OUTPUT> "Output DNG file path").value_parser(clap::value_parser!(PathBuf)))
-    .arg(
-      arg!(inputs: -i --"input" <INPUT> "Input files (raw, preview, exif, ...), index for map starts with 0")
-        .required(true)
-        .long_help(
-          "Input files to merge into a single DNG file. Usually only a single input file is used.
-If multiple input files are given, --map should be used to specifiy how to interpret each intput file.",
-        )
-        .value_parser(clap::value_parser!(PathBuf))
-        .num_args(1..),
+        .value_parser(denoise_strength_parser),
     )
     .arg(
-      arg!(map: --map <map> "Input usage map")
+      arg!(sharpen: --sharpen <strength> "Amount of sharpening applied to rendered image (0.00..=2.00)")
         .required(false)
+        .default_value(&format!("{}", DEFAULT_SHARPEN))
+        .value_parser(sharpen_strength_parser),
+    )
+    .arg(
+      arg!(sharpness_radius: --"sharpness-radius" <radius> "Radius in px of sharpening mask")
+        .required(false)
+        .value_parser(clap::value_parser!(f32))
+        .default_value("0.5"),
+    )
+    .arg(
+      arg!(--hue --saturation <hue_saturation> "Change hue and saturation of the rendered image")
+        .required(false)
+        .value_parser(clap::value_parser!(String))
         .num_args(1..)
-        .default_values(["0:raw", "0:preview", "0:thumbnail", "0:exif", "0:xmp"])
-        .long_help(
-          "When multiple input files given, each input file should be mapped to a specific type of data.
-First input file starts with index 0. Possible types are 'raw', 'preview', 'thumbnail', 'exif', 'xmp'.
-Input files which are not mapped are ignored.",
-        )
-        .value_parser(value_parser!(InputSourceUsageMap)),
+        .action(ArgAction::Set),
     )
-    /*
     .arg(
-      arg!(dng_version: --"dng-version" <VERSION> "DNG specification version")
+      arg!(--exposure --contrast <exposure_contrast> "Change the exposure (+EV) and contrast of the rendered image")
         .required(false)
-        .default_value("1.6")
-        .value_parser(value_parser!(DngVersion)),
+        .value_parser(clap::value_parser!(String))
+        .num_args(1..)
+        .action(ArgAction::Set),
     )
-     */
     .arg(
-      arg!(dng_backward_version: --"dng-backward-version" <version> "DNG specification version")
+      arg!(highlight: --highlight <highlight> "Recover highlights (0.00..=1.00)")
         .required(false)
-        .default_value("1.4")
-        .value_parser(value_parser!(DngVersion)),
+        .value_parser(clap::value_parser!(f32)),
     )
     .arg(
-      arg!(colorimetric_reference: --"colorimetric-reference" <reference> "Reference for XYZ values")
+      arg!(blackpoint: --blackpoint <blackpoint> "Adjust blackpoint (0.0..=1.0)")
         .required(false)
-        .default_value("scene")
-        .value_parser(value_parser!(DngColorimetricReference)),
+        .value_parser(clap::value_parser!(f32)),
     )
     .arg(
-      arg!(unique_camera_model: --"unique-camera-model" <id> "Unique camera model")
+      arg!(--tint --gradient <tint_gradient> "Tint the gradient along a certain axis (x y)")
+        .required(false)
+        .value_parser(clap::value_parser!(String))
+        .num_args(1..)
+        .action(ArgAction::Set),
+    )
+    .arg(
+      arg!(--temperature --tint <temperature_tint> "Set white balance via temperature/tint")
+        .required(false)
+        .value_parser(clap::value_parser!(String))
+        .num_args(1..)
+        .action(ArgAction::Set),
+    )
+    .arg(
+      arg!(wb_rgb: --"whitebalance-rgb" <rgb> "Manual whitebalance RGB values")
+        .required(false)
+        .value_parser(clap::value_parser!(String))
+        .num_args(1..)
+        .action(ArgAction::Set),
+    )
+    .arg(
+      arg!(exposure: --exposure <exposure> "Additional manual exposure adjustment in EV")
+        .required(false)
+        .value_parser(exposure_parser),
+    )
+    .arg(
+      arg!(chromatic_aberration: --"chromatic-aberration" <correction> "Correct chromatic aberration (0.00..=1.00)")
+        .required(false)
+        .value_parser(clap::value_parser!(f32)),
+    )
+    .arg(
+      arg!(vignette: --vignetting <amount> "Correct vignetting (0.00..=1.00)")
+        .required(false)
+        .value_parser(clap::value_parser!(f32)),
+    )
+    .arg(
+      arg!(distortion: --distorting <amount> "Correct distortion (0.00..=1.00)")
+        .required(false)
+        .value_parser(clap::value_parser!(f32)),
+    )
+    .arg(
+      arg!(camera_profile: --"camera-profile" <PROFILE> "Set custom camera profile")
         .required(false)
         .value_parser(NonEmptyStringValueParser::new()),
     )
     .arg(
-      arg!(artist: --"artist" <artist> "Set the Artist tag")
+      arg!(--linearization-table <path> "Linearization table")
         .required(false)
-        .value_parser(NonEmptyStringValueParser::new()),
-    )
-    .arg(
-      arg!(make: --"make" <make> "Set the Make tag")
-        .required(false)
-        .value_parser(NonEmptyStringValueParser::new()),
-    )
-    .arg(
-      arg!(model: --"model" <model> "Set the Model tag")
-        .required(false)
-        .value_parser(NonEmptyStringValueParser::new()),
-    )
-    .arg(
-      arg!(matrix1: --matrix1 <MATRIX> "Matrix 1")
-        .required(false)
-        .requires("illuminant1")
-        .value_parser(ColorMatrixArgParser),
-    )
-    .arg(
-      arg!(matrix2: --matrix2 <MATRIX> "Matrix 2")
-        .required(false)
-        .requires("illuminant2")
-        .value_parser(ColorMatrixArgParser),
-    )
-    .arg(
-      arg!(matrix3: --matrix3 <MATRIX> "Matrix 3")
-        .required(false)
-        .requires("illuminant3")
-        .value_parser(ColorMatrixArgParser),
-    )
-    .arg(
-      arg!(illuminant1: --illuminant1 <ILLUMINANT> "Illuminant 1")
-        .required(false)
-        .value_parser(CalibrationIlluminantArgParser),
-    )
-    .arg(
-      arg!(illuminant2: --illuminant2 <ILLUMINANT> "Illuminant 2")
-        .required(false)
-        .value_parser(CalibrationIlluminantArgParser),
-    )
-    .arg(
-      arg!(illuminant3: --illuminant3 <ILLUMINANT> "Illuminant 3")
-        .required(false)
-        .value_parser(CalibrationIlluminantArgParser),
-    )
-    .arg(
-      arg!(linearization: --linearization <TABLE> "Linearization table")
-        .required(false)
-        .value_parser(LinearizationTableArgParser {}),
+        .value_parser(clap::value_parser!(PathBuf)),
     )
     .arg(
       arg!(as_shot_neutral: --wb <"R,G,B"> "Whitebalance as-shot")
         .required(false)
         .conflicts_with("as_shot_white_xy")
-        .value_parser(value_parser!(WhiteBalanceInput)),
+        .value_parser(clap::value_parser!(String))
+        .num_args(1..)
+        .action(ArgAction::Set),
     )
     .arg(
       arg!(as_shot_white_xy: --"white-xy" <"x,y"> "Whitebalance as-shot encoded as xy chromaticity coordinates")
         .required(false)
-        .value_parser(WhitePointArgParser),
+        .value_parser(clap::value_parser!(String))
+        .num_args(1..)
+        .action(ArgAction::Set),
     )
     .arg(arg!(-f --override "Override existing files"))
 }
 
-/// Subcommand extract
-fn extract_command() -> Command {
-  Command::new("extract")
-    .about("Extract embedded original Raw from DNG")
+/// Subcommand reembed — re-embed edited preview JPEG into existing DNG
+fn reembed_command() -> Command {
+  Command::new("reembed")
+    .about("Re-embed edited preview into an existing DNG")
     .arg_required_else_help(true)
-    .arg(arg!(skipchecks: --skipchecks "Skip integrity checks").action(ArgAction::SetTrue))
-    .arg(arg!(-r --recursive "Process input directory recursive").action(ArgAction::SetTrue))
-    .arg(arg!(-f --override "Override existing files").action(ArgAction::SetTrue))
-    .arg(arg!(<INPUT> "Input file or directory").value_parser(clap::value_parser!(PathBuf)))
-    .arg(arg!(<OUTPUT> "Output file or existing directory").value_parser(clap::value_parser!(PathBuf)))
+    .arg(arg!(dng: --"dng" <DNG> "Input DNG file").value_parser(clap::value_parser!(PathBuf)))
+    .arg(arg!(preview: --"preview" <JPEG> "Edited preview JPEG").value_parser(clap::value_parser!(PathBuf)))
+    .arg(arg!(output: --"output" <OUTPUT> "Output DNG (default: overwrite input)").value_parser(clap::value_parser!(PathBuf)))
+    .arg(arg!(embedded: --"embed-raw" <embedded> "Embed original raw file").value_parser(ValueParser::bool()).default_value("true").default_missing_value("true"))
+    .arg(arg!(compress: --compress "Use lossless compression").action(ArgAction::SetTrue))
+    .arg(
+      arg!(compression: --"compression" <compression> "Compression method for raw image")
+        .required(false)
+        .value_parser(value_parser!(DngCompression)),
+    )
+    .arg(
+      arg!(crop: --"crop" <crop> "Crop mode: best, activearea, none")
+        .required(false)
+        .value_parser(value_parser!(CropMode))
+        .default_value("best"),
+    )
+    .arg(
+      arg!(predictor: --"predictor" <predictor> "LJPEG92 predictor (1-7)")
+        .required(false)
+        .value_parser(clap::value_parser!(u8))
+        .default_value("1"),
+    )
+    .arg(arg!(preview_enabled: --"preview-enabled" <enabled> "Include preview in output DNG").value_parser(ValueParser::bool()).default_value("true").default_missing_value("true"))
+    .arg(arg!(thumbnail_enabled: --"thumbnail-enabled" <enabled> "Include thumbnail in output DNG").value_parser(ValueParser::bool()).default_value("false").default_missing_value("false"))
+    .arg(
+      arg!(artist: --"artist" <artist> "Set artist tag")
+        .required(false)
+        .value_parser(NonEmptyStringValueParser::new()),
+    )
+    .arg(
+      arg!(seed: --"seed" <seed> "Deterministic seed for output bytes")
+        .required(false)
+        .default_value(""),
+    )
 }

@@ -16,23 +16,11 @@ _dnglab() {
             ",$1")
                 cmd="dnglab"
                 ;;
-            dnglab,analyze)
-                cmd="dnglab__subcmd__analyze"
-                ;;
             dnglab,cameras)
                 cmd="dnglab__subcmd__cameras"
                 ;;
             dnglab,convert)
                 cmd="dnglab__subcmd__convert"
-                ;;
-            dnglab,extract)
-                cmd="dnglab__subcmd__extract"
-                ;;
-            dnglab,ftpserver)
-                cmd="dnglab__subcmd__ftpserver"
-                ;;
-            dnglab,gui)
-                cmd="dnglab__subcmd__gui"
                 ;;
             dnglab,help)
                 cmd="dnglab__subcmd__help"
@@ -40,14 +28,23 @@ _dnglab() {
             dnglab,lenses)
                 cmd="dnglab__subcmd__lenses"
                 ;;
-            dnglab,makedng)
-                cmd="dnglab__subcmd__makedng"
+            dnglab,reembed)
+                cmd="dnglab__subcmd__reembed"
                 ;;
-            dnglab,process-raw)
-                cmd="dnglab__subcmd__process__subcmd__raw"
+            dnglab__subcmd__convert,help)
+                cmd="dnglab__subcmd__convert__subcmd__help"
                 ;;
-            dnglab__subcmd__help,analyze)
-                cmd="dnglab__subcmd__help__subcmd__analyze"
+            dnglab__subcmd__convert,r)
+                cmd="dnglab__subcmd__convert__subcmd__raw"
+                ;;
+            dnglab__subcmd__convert,raw)
+                cmd="dnglab__subcmd__convert__subcmd__raw"
+                ;;
+            dnglab__subcmd__convert__subcmd__help,help)
+                cmd="dnglab__subcmd__convert__subcmd__help__subcmd__help"
+                ;;
+            dnglab__subcmd__convert__subcmd__help,raw)
+                cmd="dnglab__subcmd__convert__subcmd__help__subcmd__raw"
                 ;;
             dnglab__subcmd__help,cameras)
                 cmd="dnglab__subcmd__help__subcmd__cameras"
@@ -55,26 +52,17 @@ _dnglab() {
             dnglab__subcmd__help,convert)
                 cmd="dnglab__subcmd__help__subcmd__convert"
                 ;;
-            dnglab__subcmd__help,extract)
-                cmd="dnglab__subcmd__help__subcmd__extract"
-                ;;
-            dnglab__subcmd__help,ftpserver)
-                cmd="dnglab__subcmd__help__subcmd__ftpserver"
-                ;;
-            dnglab__subcmd__help,gui)
-                cmd="dnglab__subcmd__help__subcmd__gui"
-                ;;
             dnglab__subcmd__help,help)
                 cmd="dnglab__subcmd__help__subcmd__help"
                 ;;
             dnglab__subcmd__help,lenses)
                 cmd="dnglab__subcmd__help__subcmd__lenses"
                 ;;
-            dnglab__subcmd__help,makedng)
-                cmd="dnglab__subcmd__help__subcmd__makedng"
+            dnglab__subcmd__help,reembed)
+                cmd="dnglab__subcmd__help__subcmd__reembed"
                 ;;
-            dnglab__subcmd__help,process-raw)
-                cmd="dnglab__subcmd__help__subcmd__process__subcmd__raw"
+            dnglab__subcmd__help__subcmd__convert,raw)
+                cmd="dnglab__subcmd__help__subcmd__convert__subcmd__raw"
                 ;;
             *)
                 ;;
@@ -83,38 +71,8 @@ _dnglab() {
 
     case "${cmd}" in
         dnglab)
-            opts="-d -v -h -V --loglevel --profile-path --config --help --version analyze process-raw convert ftpserver cameras lenses makedng gui extract help"
+            opts="-d -v -h -V --loglevel --profile-path --config --help --version convert reembed cameras lenses help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
-                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-                return 0
-            fi
-            case "${prev}" in
-                --loglevel)
-                    COMPREPLY=($(compgen -W "error warn info debug trace" -- "${cur}"))
-                    return 0
-                    ;;
-                -d)
-                    COMPREPLY=($(compgen -W "error warn info debug trace" -- "${cur}"))
-                    return 0
-                    ;;
-                --profile-path)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --config)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                *)
-                    COMPREPLY=()
-                    ;;
-            esac
-            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-            return 0
-            ;;
-        dnglab__subcmd__analyze)
-            opts="-d -v -h --raw-pixel --full-pixel --preview-pixel --thumbnail-pixel --raw-checksum --full-checksum --preview-checksum --thumbnail-checksum --srgb --meta --structure --summary --camera-profiles --json --yaml --loglevel --profile-path --config --help"
-            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
@@ -173,7 +131,7 @@ _dnglab() {
             return 0
             ;;
         dnglab__subcmd__convert)
-            opts="-p -c -f -r -j -d -v -h --profile --compression --ljpeg92-predictor --lossy-jpeg-quality --jxl-distance --jxl-effort --jxl-decode-speed --dng-preview --dng-thumbnail --dng-force-preview --dng-force-thumbnail --max-dng-backward-version --embed-raw --apply-dng-opcodes --remove-dng-opcodes --artist --copyright --keep-mtime --image-index --crop --override --recursive --jobs --loglevel --profile-path --config --help"
+            opts="-p -c -f -t -f -d -v -h --profile --compression --ljpeg92-predictor --lossy-jpeg-quality --jxl-distance --jxl-effort --jxl-decode-speed --dng-preview --dng-thumbnail --dng-force-preview --dng-force-thumbnail --max-dng-backward-version --embed-raw --apply-dng-opcodes --remove-dng-opcodes --artist --copyright --keep-mtime --image-index --crop --override --colorspace --render-steps --hide-steps --denoise --sharpen --sharpness-radius --saturation --contrast --highlight --blackpoint --gradient --tint --whitebalance-rgb --exposure --chromatic-aberration --vignetting --distorting --camera-profile --linearization --wb --white-xy --override --loglevel --profile-path --config --help raw r help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -267,11 +225,91 @@ _dnglab() {
                     COMPREPLY=($(compgen -W "best activearea none" -- "${cur}"))
                     return 0
                     ;;
-                --jobs)
+                --colorspace)
+                    COMPREPLY=($(compgen -W "srgb adobergb prophoto" -- "${cur}"))
+                    return 0
+                    ;;
+                --render-steps)
+                    COMPREPLY=($(compgen -W "rescale demosaic fujirotate cropactivearea baselineexposure whitebalance autowhitebalance calibrate profilerender tonecurve cropdefault denoise defaultscale exposure autoexposure sharpen transferfunction" -- "${cur}"))
+                    return 0
+                    ;;
+                --hide-steps)
+                    COMPREPLY=($(compgen -W "rescale demosaic fujirotate cropactivearea baselineexposure whitebalance autowhitebalance calibrate profilerender tonecurve cropdefault denoise defaultscale exposure autoexposure sharpen transferfunction" -- "${cur}"))
+                    return 0
+                    ;;
+                --denoise)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
-                -j)
+                --sharpen)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --sharpness-radius)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --saturation)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --contrast)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --highlight)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --blackpoint)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --gradient)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --tint)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --whitebalance-rgb)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --exposure)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --chromatic-aberration)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --vignetting)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --distorting)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --camera-profile)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --linearization)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                -t)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --wb)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --white-xy)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
@@ -298,29 +336,13 @@ _dnglab() {
             COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
             return 0
             ;;
-        dnglab__subcmd__extract)
-            opts="-r -f -d -v -h --skipchecks --recursive --override --loglevel --profile-path --config --help"
-            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+        dnglab__subcmd__convert__subcmd__help)
+            opts="raw help"
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
-                --loglevel)
-                    COMPREPLY=($(compgen -W "error warn info debug trace" -- "${cur}"))
-                    return 0
-                    ;;
-                -d)
-                    COMPREPLY=($(compgen -W "error warn info debug trace" -- "${cur}"))
-                    return 0
-                    ;;
-                --profile-path)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --config)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
                 *)
                     COMPREPLY=()
                     ;;
@@ -328,129 +350,13 @@ _dnglab() {
             COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
             return 0
             ;;
-        dnglab__subcmd__ftpserver)
-            opts="-p -c -f -d -v -h --profile --compression --ljpeg92-predictor --lossy-jpeg-quality --jxl-distance --jxl-effort --jxl-decode-speed --dng-preview --dng-thumbnail --dng-force-preview --dng-force-thumbnail --max-dng-backward-version --embed-raw --apply-dng-opcodes --remove-dng-opcodes --artist --copyright --keep-mtime --image-index --crop --override --port --listen --keep-original --loglevel --profile-path --config --help"
-            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+        dnglab__subcmd__convert__subcmd__help__subcmd__help)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 4 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
-                --profile)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                -p)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --compression)
-                    COMPREPLY=($(compgen -W "lossless lossy jxl deflate uncompressed" -- "${cur}"))
-                    return 0
-                    ;;
-                -c)
-                    COMPREPLY=($(compgen -W "lossless lossy jxl deflate uncompressed" -- "${cur}"))
-                    return 0
-                    ;;
-                --ljpeg92-predictor)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --lossy-jpeg-quality)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --jxl-distance)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --jxl-effort)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --jxl-decode-speed)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --dng-preview)
-                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
-                    return 0
-                    ;;
-                --dng-thumbnail)
-                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
-                    return 0
-                    ;;
-                --dng-force-preview)
-                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
-                    return 0
-                    ;;
-                --dng-force-thumbnail)
-                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
-                    return 0
-                    ;;
-                --max-dng-backward-version)
-                    COMPREPLY=($(compgen -W "1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.7.1" -- "${cur}"))
-                    return 0
-                    ;;
-                --embed-raw)
-                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
-                    return 0
-                    ;;
-                --apply-dng-opcodes)
-                    COMPREPLY=($(compgen -W "auto list1 list2 list3" -- "${cur}"))
-                    return 0
-                    ;;
-                --remove-dng-opcodes)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --artist)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --copyright)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --keep-mtime)
-                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
-                    return 0
-                    ;;
-                --image-index)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --crop)
-                    COMPREPLY=($(compgen -W "best activearea none" -- "${cur}"))
-                    return 0
-                    ;;
-                --port)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --listen)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --keep-original)
-                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
-                    return 0
-                    ;;
-                --loglevel)
-                    COMPREPLY=($(compgen -W "error warn info debug trace" -- "${cur}"))
-                    return 0
-                    ;;
-                -d)
-                    COMPREPLY=($(compgen -W "error warn info debug trace" -- "${cur}"))
-                    return 0
-                    ;;
-                --profile-path)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --config)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
                 *)
                     COMPREPLY=()
                     ;;
@@ -458,9 +364,23 @@ _dnglab() {
             COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
             return 0
             ;;
-        dnglab__subcmd__gui)
+        dnglab__subcmd__convert__subcmd__help__subcmd__raw)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 4 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        dnglab__subcmd__convert__subcmd__raw)
             opts="-d -v -h --loglevel --profile-path --config --help"
-            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
@@ -489,22 +409,8 @@ _dnglab() {
             return 0
             ;;
         dnglab__subcmd__help)
-            opts="analyze process-raw convert ftpserver cameras lenses makedng gui extract help"
+            opts="convert reembed cameras lenses help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
-                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-                return 0
-            fi
-            case "${prev}" in
-                *)
-                    COMPREPLY=()
-                    ;;
-            esac
-            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-            return 0
-            ;;
-        dnglab__subcmd__help__subcmd__analyze)
-            opts=""
-            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
@@ -531,7 +437,7 @@ _dnglab() {
             return 0
             ;;
         dnglab__subcmd__help__subcmd__convert)
-            opts=""
+            opts="raw"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
@@ -544,37 +450,9 @@ _dnglab() {
             COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
             return 0
             ;;
-        dnglab__subcmd__help__subcmd__extract)
+        dnglab__subcmd__help__subcmd__convert__subcmd__raw)
             opts=""
-            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
-                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-                return 0
-            fi
-            case "${prev}" in
-                *)
-                    COMPREPLY=()
-                    ;;
-            esac
-            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-            return 0
-            ;;
-        dnglab__subcmd__help__subcmd__ftpserver)
-            opts=""
-            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
-                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-                return 0
-            fi
-            case "${prev}" in
-                *)
-                    COMPREPLY=()
-                    ;;
-            esac
-            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-            return 0
-            ;;
-        dnglab__subcmd__help__subcmd__gui)
-            opts=""
-            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 4 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
@@ -614,21 +492,7 @@ _dnglab() {
             COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
             return 0
             ;;
-        dnglab__subcmd__help__subcmd__makedng)
-            opts=""
-            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
-                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-                return 0
-            fi
-            case "${prev}" in
-                *)
-                    COMPREPLY=()
-                    ;;
-            esac
-            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-            return 0
-            ;;
-        dnglab__subcmd__help__subcmd__process__subcmd__raw)
+        dnglab__subcmd__help__subcmd__reembed)
             opts=""
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
@@ -672,177 +536,55 @@ _dnglab() {
             COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
             return 0
             ;;
-        dnglab__subcmd__makedng)
-            opts="-o -i -f -d -v -h --output --input --map --dng-backward-version --colorimetric-reference --unique-camera-model --artist --make --model --matrix1 --matrix2 --matrix3 --illuminant1 --illuminant2 --illuminant3 --linearization --wb --white-xy --override --loglevel --profile-path --config --help"
+        dnglab__subcmd__reembed)
+            opts="-d -v -h --dng --preview --output --embed-raw --compress --compression --crop --predictor --preview-enabled --thumbnail-enabled --artist --seed --loglevel --profile-path --config --help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
             case "${prev}" in
+                --dng)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
+                --preview)
+                    COMPREPLY=($(compgen -f "${cur}"))
+                    return 0
+                    ;;
                 --output)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
-                -o)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --input)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                -i)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --map)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --dng-backward-version)
-                    COMPREPLY=($(compgen -W "1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.7.1" -- "${cur}"))
-                    return 0
-                    ;;
-                --colorimetric-reference)
-                    COMPREPLY=($(compgen -W "scene output" -- "${cur}"))
-                    return 0
-                    ;;
-                --unique-camera-model)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --artist)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --make)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --model)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --matrix1)
-                    COMPREPLY=($(compgen -W "XYZ_sRGB_D50 XYZ_sRGB_D65 XYZ_AdobeRGB_D50 XYZ_AdobeRGB_D65 custom 3x3 matrix (comma seperated)" -- "${cur}"))
-                    return 0
-                    ;;
-                --matrix2)
-                    COMPREPLY=($(compgen -W "XYZ_sRGB_D50 XYZ_sRGB_D65 XYZ_AdobeRGB_D50 XYZ_AdobeRGB_D65 custom 3x3 matrix (comma seperated)" -- "${cur}"))
-                    return 0
-                    ;;
-                --matrix3)
-                    COMPREPLY=($(compgen -W "XYZ_sRGB_D50 XYZ_sRGB_D65 XYZ_AdobeRGB_D50 XYZ_AdobeRGB_D65 custom 3x3 matrix (comma seperated)" -- "${cur}"))
-                    return 0
-                    ;;
-                --illuminant1)
-                    COMPREPLY=($(compgen -W "Unknown A B C D50 D55 D65 D75" -- "${cur}"))
-                    return 0
-                    ;;
-                --illuminant2)
-                    COMPREPLY=($(compgen -W "Unknown A B C D50 D55 D65 D75" -- "${cur}"))
-                    return 0
-                    ;;
-                --illuminant3)
-                    COMPREPLY=($(compgen -W "Unknown A B C D50 D55 D65 D75" -- "${cur}"))
-                    return 0
-                    ;;
-                --linearization)
-                    COMPREPLY=($(compgen -W "8bit_sRGB 8bit_sRGB_invert 16bit_sRGB 16bit_sRGB_invert 8bit_gamma1.8 8bit_gamma1.8_invert 8bit_gamma2.0 8bit_gamma2.0_invert 8bit_gamma2.2 8bit_gamma2.2_invert 8bit_gamma2.4 8bit_gamma2.4_invert 16bit_gamma1.8 16bit_gamma1.8_invert 16bit_gamma2.0 16bit_gamma2.0_invert 16bit_gamma2.2 16bit_gamma2.2_invert 16bit_gamma2.4 16bit_gamma2.4_invert custom table (comma seperated)" -- "${cur}"))
-                    return 0
-                    ;;
-                --wb)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --white-xy)
-                    COMPREPLY=($(compgen -W "D50 D65 custom x,y value (comma seperated)" -- "${cur}"))
-                    return 0
-                    ;;
-                --loglevel)
-                    COMPREPLY=($(compgen -W "error warn info debug trace" -- "${cur}"))
-                    return 0
-                    ;;
-                -d)
-                    COMPREPLY=($(compgen -W "error warn info debug trace" -- "${cur}"))
-                    return 0
-                    ;;
-                --profile-path)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --config)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                *)
-                    COMPREPLY=()
-                    ;;
-            esac
-            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-            return 0
-            ;;
-        dnglab__subcmd__process__subcmd__raw)
-            opts="-f -r -d -v -h --remove-dng-opcodes --artist --keep-mtime --image-index --crop --crop-transparent --format --color-space --jpeg-quality --denoise-luma --denoise-chroma --sharpen --exposure --auto-exposure --steps --skip-steps --override --recursive --loglevel --profile-path --config --help"
-            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
-                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
-                return 0
-            fi
-            case "${prev}" in
-                --remove-dng-opcodes)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --artist)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --keep-mtime)
+                --embed-raw)
                     COMPREPLY=($(compgen -W "true false" -- "${cur}"))
                     return 0
                     ;;
-                --image-index)
-                    COMPREPLY=($(compgen -f "${cur}"))
+                --compression)
+                    COMPREPLY=($(compgen -W "lossless lossy jxl deflate uncompressed" -- "${cur}"))
                     return 0
                     ;;
                 --crop)
                     COMPREPLY=($(compgen -W "best activearea none" -- "${cur}"))
                     return 0
                     ;;
-                --format)
-                    COMPREPLY=($(compgen -W "tif jpeg" -- "${cur}"))
-                    return 0
-                    ;;
-                --color-space)
-                    COMPREPLY=($(compgen -W "srgb adobergb prophoto" -- "${cur}"))
-                    return 0
-                    ;;
-                --jpeg-quality)
+                --predictor)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
-                --denoise-luma)
+                --preview-enabled)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                --thumbnail-enabled)
+                    COMPREPLY=($(compgen -W "true false" -- "${cur}"))
+                    return 0
+                    ;;
+                --artist)
                     COMPREPLY=($(compgen -f "${cur}"))
                     return 0
                     ;;
-                --denoise-chroma)
+                --seed)
                     COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --sharpen)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --exposure)
-                    COMPREPLY=($(compgen -f "${cur}"))
-                    return 0
-                    ;;
-                --steps)
-                    COMPREPLY=($(compgen -W "rescale demosaic fujirotate cropactivearea baselineexposure whitebalance autowhitebalance calibrate profilerender tonecurve cropdefault denoise defaultscale exposure autoexposure sharpen transferfunction" -- "${cur}"))
-                    return 0
-                    ;;
-                --skip-steps)
-                    COMPREPLY=($(compgen -W "rescale demosaic fujirotate cropactivearea baselineexposure whitebalance autowhitebalance calibrate profilerender tonecurve cropdefault denoise defaultscale exposure autoexposure sharpen transferfunction" -- "${cur}"))
                     return 0
                     ;;
                 --loglevel)

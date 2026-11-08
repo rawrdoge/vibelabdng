@@ -1,0 +1,107 @@
+.ie \n(.g .ds Aq \(aq
+.el .ds Aq '
+.TH dnglab-reembed 1  "dnglab-reembed " 
+.SH NAME
+dnglab\-reembed \- Re\-embed edited preview into an existing DNG
+.SH SYNOPSIS
+\fBdnglab\-reembed\fR [\fB\-\-dng\fR] [\fB\-\-preview\fR] [\fB\-\-output\fR] [\fB\-\-embed\-raw\fR] [\fB\-\-compress\fR] [\fB\-\-compression\fR] [\fB\-\-crop\fR] [\fB\-\-predictor\fR] [\fB\-\-preview\-enabled\fR] [\fB\-\-thumbnail\-enabled\fR] [\fB\-\-artist\fR] [\fB\-\-seed\fR] [\fB\-h\fR|\fB\-\-help\fR] 
+.SH DESCRIPTION
+Re\-embed edited preview into an existing DNG
+.SH OPTIONS
+.TP
+\fB\-\-dng\fR \fI<DNG>\fR
+Input DNG file
+.TP
+\fB\-\-preview\fR \fI<JPEG>\fR
+Edited preview JPEG
+.TP
+\fB\-\-output\fR \fI<OUTPUT>\fR
+Output DNG (default: overwrite input)
+.TP
+\fB\-\-embed\-raw\fR \fI<embedded>\fR [default: true]
+Embed original raw file
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+true
+.IP \(bu 2
+false
+.RE
+.TP
+\fB\-\-compress\fR
+Use lossless compression
+.TP
+\fB\-\-compression\fR \fI<compression>\fR
+Compression method for raw image
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+lossless
+.IP \(bu 2
+lossy
+.IP \(bu 2
+jxl
+.IP \(bu 2
+deflate
+.IP \(bu 2
+uncompressed
+.RE
+.TP
+\fB\-\-crop\fR \fI<crop>\fR [default: best]
+Crop mode: best, activearea, none
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+best
+.IP \(bu 2
+activearea
+.IP \(bu 2
+none
+.RE
+.TP
+\fB\-\-predictor\fR \fI<predictor>\fR [default: 1]
+LJPEG92 predictor (1\-7)
+.TP
+\fB\-\-preview\-enabled\fR \fI<enabled>\fR [default: true]
+Include preview in output DNG
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+true
+.IP \(bu 2
+false
+.RE
+.TP
+\fB\-\-thumbnail\-enabled\fR \fI<enabled>\fR [default: false]
+Include thumbnail in output DNG
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+true
+.IP \(bu 2
+false
+.RE
+.TP
+\fB\-\-artist\fR \fI<artist>\fR
+Set artist tag
+.TP
+\fB\-\-seed\fR \fI<seed>\fR [default: ]
+Deterministic seed for output bytes
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Print help

@@ -7,25 +7,19 @@ use rawler::{
   formats::{jfif::JfifError, tiff::TiffError},
 };
 use thiserror::Error;
-//use log::debug;
 
-pub mod analyze;
 pub mod app;
-pub mod camera_profiles;
 pub mod cameras;
 pub mod config;
 pub mod convert;
 pub mod convertprofile;
-pub mod extract;
 pub mod filemap;
-pub mod ftpconv;
-pub mod gui;
 pub mod jobs;
 pub mod lenses;
-pub mod makedng;
-pub mod process_raw;
+pub mod reembed;
 
 const PKG_VERSION: &str = env!("CARGO_PKG_VERSION");
+#[allow(dead_code)]
 const PKG_NAME: &str = env!("CARGO_PKG_NAME");
 
 #[derive(Error, Debug)]
@@ -75,12 +69,6 @@ impl From<RawlerError> for AppError {
   }
 }
 
-impl From<config::ConfigError> for AppError {
-  fn from(value: config::ConfigError) -> Self {
-    anyhow::Error::new(value).into()
-  }
-}
-
 impl From<ConvertProfileError> for AppError {
   fn from(value: ConvertProfileError) -> Self {
     anyhow::Error::new(value).into()
@@ -101,6 +89,12 @@ impl From<JfifError> for AppError {
 
 impl From<TiffError> for AppError {
   fn from(value: TiffError) -> Self {
+    anyhow::Error::new(value).into()
+  }
+}
+
+impl From<crate::config::ConfigError> for AppError {
+  fn from(value: crate::config::ConfigError) -> Self {
     anyhow::Error::new(value).into()
   }
 }

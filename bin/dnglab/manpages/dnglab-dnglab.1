@@ -1,0 +1,378 @@
+.ie \n(.g .ds Aq \(aq
+.el .ds Aq '
+.TH dnglab-dnglab 1  "dnglab-dnglab " 
+.SH NAME
+dnglab\-dnglab \- Convert raw image(s) into dng format
+.SH SYNOPSIS
+\fBdnglab\-dnglab\fR [\fB\-p\fR|\fB\-\-profile\fR] [\fB\-c\fR|\fB\-\-compression\fR] [\fB\-\-ljpeg92\-predictor\fR] [\fB\-\-lossy\-jpeg\-quality\fR] [\fB\-\-jxl\-distance\fR] [\fB\-\-jxl\-effort\fR] [\fB\-\-jxl\-decode\-speed\fR] [\fB\-\-dng\-preview\fR] [\fB\-\-dng\-thumbnail\fR] [\fB\-\-dng\-force\-preview\fR] [\fB\-\-dng\-force\-thumbnail\fR] [\fB\-\-max\-dng\-backward\-version\fR] [\fB\-\-embed\-raw\fR] [\fB\-\-apply\-dng\-opcodes\fR] [\fB\-\-remove\-dng\-opcodes\fR] [\fB\-\-artist\fR] [\fB\-\-copyright\fR] [\fB\-\-keep\-mtime\fR] [\fB\-\-image\-index\fR] [\fB\-\-crop\fR] [\fB\-f\fR|\fB\-\-override\fR] [\fB\-\-colorspace\fR] [\fB\-\-render\-steps\fR] [\fB\-\-hide\-steps\fR] [\fB\-\-denoise\fR] [\fB\-\-sharpen\fR] [\fB\-\-sharpness\-radius\fR] [\fB\-\-saturation\fR] [\fB\-\-contrast\fR] [\fB\-\-highlight\fR] [\fB\-\-blackpoint\fR] [\fB\-\-gradient\fR] [\fB\-\-tint\fR] [\fB\-\-whitebalance\-rgb\fR] [\fB\-\-exposure\fR] [\fB\-\-chromatic\-aberration\fR] [\fB\-\-vignetting\fR] [\fB\-\-distorting\fR] [\fB\-\-camera\-profile\fR] [\fB\-t\fR|\fB\-\-linearization\fR] [\fB\-\-wb\fR] [\fB\-\-white\-xy\fR] [\fB\-f\fR|\fB\-\-override\fR] [\fB\-h\fR|\fB\-\-help\fR] <\fIINPUT\fR> <\fIOUTPUT\fR> [\fIsubcommands\fR]
+.SH DESCRIPTION
+Convert raw image(s) into dng format
+.SH OPTIONS
+.TP
+\fB\-p\fR, \fB\-\-profile\fR \fI<name>\fR
+Convert profile to use for conversion. Built\-in profiles are \*(Aqbuiltin_compat\*(Aq (DNG 1.4.0), \*(Aqbuiltin_latest\*(Aq (DNG 1.6.0),
+\*(Aqbuiltin_jxl\*(Aq (JPEG XL lossless, DNG 1.7.1) and \*(Aqbuiltin_archive\*(Aq.
+If not given, \*(Aqconvert.default_profile\*(Aq from the dnglab configuration file is used.
+Otherwise no profile is used and the command line switches with their defaults apply.
+Command line switches override the values of the profile.
+.TP
+\fB\-c\fR, \fB\-\-compression\fR \fI<compression>\fR [default: lossless]
+Compression for raw image. Deflate: floating point input only (DNG 1.4), half floats where they fit.
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+lossless
+.IP \(bu 2
+lossy
+.IP \(bu 2
+jxl
+.IP \(bu 2
+deflate
+.IP \(bu 2
+uncompressed
+.RE
+.TP
+\fB\-\-ljpeg92\-predictor\fR \fI<predictor>\fR [default: 1]
+LJPEG\-92 predictor
+.TP
+\fB\-\-lossy\-jpeg\-quality\fR \fI<quality>\fR [default: 94]
+JPEG quality for lossy compression (1\-100)
+.TP
+\fB\-\-jxl\-distance\fR \fI<distance>\fR [default: 0]
+JPEG XL distance (0\-25). 0 is lossless, larger values are lossy and give smaller files.
+Lossy compression applies OpcodeList1 to the image data.
+.TP
+\fB\-\-jxl\-effort\fR \fI<effort>\fR [default: 7]
+JPEG XL encoder effort (1\-9)
+.TP
+\fB\-\-jxl\-decode\-speed\fR \fI<speed>\fR [default: 4]
+JPEG XL decoding speed for lossy compression (1\-4)
+.TP
+\fB\-\-dng\-preview\fR \fI<preview>\fR [default: true]
+DNG include preview image
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+true
+.IP \(bu 2
+false
+.RE
+.TP
+\fB\-\-dng\-thumbnail\fR \fI<thumbnail>\fR [default: true]
+DNG include thumbnail image
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+true
+.IP \(bu 2
+false
+.RE
+.TP
+\fB\-\-dng\-force\-preview\fR \fI<force_preview>\fR [default: false]
+Generate DNG preview image from raw data
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+true
+.IP \(bu 2
+false
+.RE
+.TP
+\fB\-\-dng\-force\-thumbnail\fR \fI<force_thumbnail>\fR [default: false]
+Generate DNG thumbnail image from raw data
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+true
+.IP \(bu 2
+false
+.RE
+.TP
+\fB\-\-max\-dng\-backward\-version\fR \fI<version>\fR [default: 1.4]
+Maximum DNG backward version
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+1.0
+.IP \(bu 2
+1.1
+.IP \(bu 2
+1.2
+.IP \(bu 2
+1.3
+.IP \(bu 2
+1.4
+.IP \(bu 2
+1.5
+.IP \(bu 2
+1.6
+.IP \(bu 2
+1.7
+.IP \(bu 2
+1.7.1
+.RE
+.TP
+\fB\-\-embed\-raw\fR \fI<embedded>\fR [default: true]
+Embed the raw file into DNG
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+true
+.IP \(bu 2
+false
+.RE
+.TP
+\fB\-\-apply\-dng\-opcodes\fR \fI<mode>\fR [default: auto]
+Apply DNG opcode lists to the image data instead of writing them to the DNG
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+auto
+.IP \(bu 2
+list1
+.IP \(bu 2
+list2
+.IP \(bu 2
+list3
+.RE
+.TP
+\fB\-\-remove\-dng\-opcodes\fR \fI<opcodes>\fR
+Remove DNG opcodes, as comma separated [<list>:]<opcode> (e.g. WarpRectilinear,2:GainMap)
+.TP
+\fB\-\-artist\fR \fI<artist>\fR
+Set the artist tag
+.TP
+\fB\-\-copyright\fR \fI<copyright>\fR
+Set the copyright tag
+.TP
+\fB\-\-keep\-mtime\fR \fI<keepmtime>\fR [default: false]
+Keep mtime, read from EXIF with fallback to original file mtime
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+true
+.IP \(bu 2
+false
+.RE
+.TP
+\fB\-\-image\-index\fR \fI<index>\fR [default: 0]
+Select a specific image index (or \*(Aqall\*(Aq) if file is a image container
+.TP
+\fB\-\-crop\fR \fI<crop>\fR [default: best]
+DNG default crop
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+best
+.IP \(bu 2
+activearea
+.IP \(bu 2
+none
+.RE
+.TP
+\fB\-f\fR, \fB\-\-override\fR
+Override existing files
+.TP
+\fB\-\-colorspace\fR \fI<COLORSPACE>\fR [default: srgb]
+The colorspace the resulting DNG file will have. This includes setting the color matrices if not done in the profile.
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+srgb
+.IP \(bu 2
+adobergb
+.IP \(bu 2
+prophoto
+.RE
+.TP
+\fB\-\-render\-steps\fR \fI<steps>\fR
+Render pipeline steps
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+rescale
+.IP \(bu 2
+demosaic
+.IP \(bu 2
+fujirotate
+.IP \(bu 2
+cropactivearea
+.IP \(bu 2
+baselineexposure
+.IP \(bu 2
+whitebalance
+.IP \(bu 2
+autowhitebalance
+.IP \(bu 2
+calibrate
+.IP \(bu 2
+profilerender
+.IP \(bu 2
+tonecurve
+.IP \(bu 2
+cropdefault
+.IP \(bu 2
+denoise
+.IP \(bu 2
+defaultscale
+.IP \(bu 2
+exposure
+.IP \(bu 2
+autoexposure
+.IP \(bu 2
+sharpen
+.IP \(bu 2
+transferfunction
+.RE
+.TP
+\fB\-\-hide\-steps\fR \fI<steps>\fR
+Hide render pipeline steps
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+rescale
+.IP \(bu 2
+demosaic
+.IP \(bu 2
+fujirotate
+.IP \(bu 2
+cropactivearea
+.IP \(bu 2
+baselineexposure
+.IP \(bu 2
+whitebalance
+.IP \(bu 2
+autowhitebalance
+.IP \(bu 2
+calibrate
+.IP \(bu 2
+profilerender
+.IP \(bu 2
+tonecurve
+.IP \(bu 2
+cropdefault
+.IP \(bu 2
+denoise
+.IP \(bu 2
+defaultscale
+.IP \(bu 2
+exposure
+.IP \(bu 2
+autoexposure
+.IP \(bu 2
+sharpen
+.IP \(bu 2
+transferfunction
+.RE
+.TP
+\fB\-\-denoise\fR \fI<strength>\fR
+Amount of denoising applied to rendered image (0.00..=4.00)
+.TP
+\fB\-\-sharpen\fR \fI<strength>\fR [default: 0.2]
+Amount of sharpening applied to rendered image (0.00..=2.00)
+.TP
+\fB\-\-sharpness\-radius\fR \fI<radius>\fR [default: 0.5]
+Radius in px of sharpening mask
+.TP
+\fB\-\-saturation\fR \fI<hue_saturation>...\fR
+Change hue and saturation of the rendered image
+.TP
+\fB\-\-contrast\fR \fI<exposure_contrast>...\fR
+Change the exposure (+EV) and contrast of the rendered image
+.TP
+\fB\-\-highlight\fR \fI<highlight>\fR
+Recover highlights (0.00..=1.00)
+.TP
+\fB\-\-blackpoint\fR \fI<blackpoint>\fR
+Adjust blackpoint (0.0..=1.0)
+.TP
+\fB\-\-gradient\fR \fI<tint_gradient>...\fR
+Tint the gradient along a certain axis (x y)
+.TP
+\fB\-\-tint\fR \fI<temperature_tint>...\fR
+Set white balance via temperature/tint
+.TP
+\fB\-\-whitebalance\-rgb\fR \fI<rgb>...\fR
+Manual whitebalance RGB values
+.TP
+\fB\-\-exposure\fR \fI<exposure>\fR
+Additional manual exposure adjustment in EV
+.TP
+\fB\-\-chromatic\-aberration\fR \fI<correction>\fR
+Correct chromatic aberration (0.00..=1.00)
+.TP
+\fB\-\-vignetting\fR \fI<amount>\fR
+Correct vignetting (0.00..=1.00)
+.TP
+\fB\-\-distorting\fR \fI<amount>\fR
+Correct distortion (0.00..=1.00)
+.TP
+\fB\-\-camera\-profile\fR \fI<PROFILE>\fR
+Set custom camera profile
+.TP
+\fB\-t\fR, \fB\-\-linearization\fR \fI<path>\fR
+Linearization table
+.TP
+\fB\-\-wb\fR \fI<R,G,B>...\fR
+Whitebalance as\-shot
+.TP
+\fB\-\-white\-xy\fR \fI<x,y>...\fR
+Whitebalance as\-shot encoded as xy chromaticity coordinates
+.TP
+\fB\-f\fR, \fB\-\-override\fR
+Override existing files
+.TP
+\fB\-h\fR, \fB\-\-help\fR
+Print help (see a summary with \*(Aq\-h\*(Aq)
+.TP
+<\fIINPUT\fR>
+Input file or directory
+.TP
+<\fIOUTPUT\fR>
+Output file or existing directory
+.SH SUBCOMMANDS
+.TP
+dnglab\-dnglab\-raw(1)
+Convert raw images to DNG (deprecated: same as convert)
+.TP
+dnglab\-dnglab\-help(1)
+Print this message or the help of the given subcommand(s)

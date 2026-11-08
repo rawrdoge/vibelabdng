@@ -33,67 +33,7 @@ _dnglab() {
         (( CURRENT += 1 ))
         curcontext="${curcontext%:*:*}:dnglab-command-$line[1]:"
         case $line[1] in
-            (analyze)
-_arguments "${_arguments_options[@]}" : \
-'-d+[Log level]:level:(error warn info debug trace)' \
-'--loglevel=[Log level]:level:(error warn info debug trace)' \
-'--profile-path=[Directory with profile TOML files]:dir:_files' \
-'--config=[dnglab configuration file]:file:_files' \
-'--raw-pixel[]' \
-'--full-pixel[Write uncompressed full pixel data to STDOUT]' \
-'--preview-pixel[Write uncompressed preview pixel data to STDOUT]' \
-'--thumbnail-pixel[Write uncompressed preview pixel data to STDOUT]' \
-'--raw-checksum[Write MD5 checksum of raw pixels to STDOUT]' \
-'--full-checksum[Write MD5 checksum of full pixels to STDOUT]' \
-'--preview-checksum[Write MD5 checksum of preview pixels to STDOUT]' \
-'--thumbnail-checksum[Write MD5 checksum of thumbnail pixels to STDOUT]' \
-'--srgb[Write sRGB 16-bit TIFF to STDOUT]' \
-'--meta[Write metadata to STDOUT]' \
-'--structure[Write file structure to STDOUT]' \
-'--summary[Write summary information for file to STDOUT]' \
-'--camera-profiles[Write camera profiles to STDOUT (plain text, JSON or YAML)]' \
-'--json[Format metadata as JSON]' \
-'--yaml[Format metadata as YAML]' \
-'-v[Print status for every file]' \
-'-h[Print help (see more with '\''--help'\'')]' \
-'--help[Print help (see more with '\''--help'\'')]' \
-':FILE -- Input file:_files' \
-&& ret=0
-;;
-(process-raw)
-_arguments "${_arguments_options[@]}" : \
-'*--remove-dng-opcodes=[Remove DNG opcodes, as comma separated \[<list>\:\]<opcode> (e.g. WarpRectilinear,2\:GainMap)]:opcodes:_default' \
-'--artist=[Set the artist tag]:artist:_default' \
-'--keep-mtime=[Keep mtime, read from EXIF with fallback to original file mtime]:keepmtime:(true false)' \
-'--image-index=[Select a specific image index (or '\''all'\'') if file is a image container]:index:_default' \
-'--crop=[Crop of the image\: DefaultCrop (best), ActiveArea or none]:crop:(best activearea none)' \
-'--format=[Output image format, defaults to the OUTPUT file extension or tif]:format:(tif jpeg)' \
-'--color-space=[Color space of the image]:space:(srgb adobergb prophoto)' \
-'--jpeg-quality=[JPEG quality (1-100)]:quality:_default' \
-'--denoise-luma=[Strength of the luma noise reduction (0-4), 0 is off, 1 is a full reduction \[default\: 0.25\]]:strength:_default' \
-'--denoise-chroma=[Strength of the chroma noise reduction (0-4), 0 is off, 1 is a full reduction \[default\: 0.5\]]:strength:_default' \
-'--sharpen=[Strength of the sharpening (0-2), 0 is off, 1 is the classic Laplacian filter \[default\: 0.2\]]:strength:_default' \
-'--exposure=[Change the exposure by this value in EV, e.g. -1.2. A negative value keeps white \[default\: 0\]]:EV:_default' \
-'*--steps=[Apply only these processing steps of the rendering, as comma separated list. Without it the default steps are applied]:steps:(rescale demosaic fujirotate cropactivearea baselineexposure whitebalance autowhitebalance calibrate profilerender tonecurve cropdefault denoise defaultscale exposure autoexposure sharpen transferfunction)' \
-'*--skip-steps=[Skip these processing steps of the rendering, as comma separated list (e.g. tonecurve,denoise,sharpen). Takes priority over --steps]:steps:(rescale demosaic fujirotate cropactivearea baselineexposure whitebalance autowhitebalance calibrate profilerender tonecurve cropdefault denoise defaultscale exposure autoexposure sharpen transferfunction)' \
-'-d+[Log level]:level:(error warn info debug trace)' \
-'--loglevel=[Log level]:level:(error warn info debug trace)' \
-'--profile-path=[Directory with profile TOML files]:dir:_files' \
-'--config=[dnglab configuration file]:file:_files' \
-'--crop-transparent[Crop to the largest rectangle without transparent pixels of the DNG transparency mask]' \
-'--auto-exposure[Correct the exposure by an estimate from the image, --exposure is added to it]' \
-'-f[Override existing files]' \
-'--override[Override existing files]' \
-'-r[Process input directory recursive]' \
-'--recursive[Process input directory recursive]' \
-'-v[Print status for every file]' \
-'-h[Print help (see more with '\''--help'\'')]' \
-'--help[Print help (see more with '\''--help'\'')]' \
-':INPUT -- Input file or directory:_files' \
-':OUTPUT -- Output file or existing directory:_files' \
-&& ret=0
-;;
-(convert)
+            (convert)
 _arguments "${_arguments_options[@]}" : \
 '-p+[Convert profile name]:name:_default' \
 '--profile=[Convert profile name]:name:_default' \
@@ -117,16 +57,57 @@ _arguments "${_arguments_options[@]}" : \
 '--keep-mtime=[Keep mtime, read from EXIF with fallback to original file mtime]:keepmtime:(true false)' \
 '--image-index=[Select a specific image index (or '\''all'\'') if file is a image container]:index:_default' \
 '--crop=[DNG default crop]:crop:(best activearea none)' \
-'-j+[Number of files to convert in parallel (0 = auto)]:N:_default' \
-'--jobs=[Number of files to convert in parallel (0 = auto)]:N:_default' \
+'--colorspace=[Colorspace of resulting DNG image]:COLORSPACE:(srgb adobergb prophoto)' \
+'*--render-steps=[Render pipeline steps]:steps:(rescale demosaic fujirotate cropactivearea baselineexposure whitebalance autowhitebalance calibrate profilerender tonecurve cropdefault denoise defaultscale exposure autoexposure sharpen transferfunction)' \
+'*--hide-steps=[Hide render pipeline steps]:steps:(rescale demosaic fujirotate cropactivearea baselineexposure whitebalance autowhitebalance calibrate profilerender tonecurve cropdefault denoise defaultscale exposure autoexposure sharpen transferfunction)' \
+'--denoise=[Amount of denoising applied to rendered image (0.00..=4.00)]:strength:_default' \
+'--sharpen=[Amount of sharpening applied to rendered image (0.00..=2.00)]:strength:_default' \
+'--sharpness-radius=[Radius in px of sharpening mask]:radius:_default' \
+'--saturation=[Change hue and saturation of the rendered image]:hue_saturation:_default' \
+'--contrast=[Change the exposure (+EV) and contrast of the rendered image]:exposure_contrast:_default' \
+'--highlight=[Recover highlights (0.00..=1.00)]:highlight:_default' \
+'--blackpoint=[Adjust blackpoint (0.0..=1.0)]:blackpoint:_default' \
+'--gradient=[Tint the gradient along a certain axis (x y)]:tint_gradient:_default' \
+'--tint=[Set white balance via temperature/tint]:temperature_tint:_default' \
+'--whitebalance-rgb=[Manual whitebalance RGB values]:rgb:_default' \
+'--exposure=[Additional manual exposure adjustment in EV]:exposure:_default' \
+'--chromatic-aberration=[Correct chromatic aberration (0.00..=1.00)]:correction:_default' \
+'--vignetting=[Correct vignetting (0.00..=1.00)]:amount:_default' \
+'--distorting=[Correct distortion (0.00..=1.00)]:amount:_default' \
+'--camera-profile=[Set custom camera profile]:PROFILE:_default' \
+'-t+[Linearization table]:path:_files' \
+'--linearization=[Linearization table]:path:_files' \
+'(--white-xy)--wb=[Whitebalance as-shot]:R,G,B:_default' \
+'--white-xy=[Whitebalance as-shot encoded as xy chromaticity coordinates]:x,y:_default' \
 '-d+[Log level]:level:(error warn info debug trace)' \
 '--loglevel=[Log level]:level:(error warn info debug trace)' \
 '--profile-path=[Directory with profile TOML files]:dir:_files' \
 '--config=[dnglab configuration file]:file:_files' \
 '-f[Override existing files]' \
 '--override[Override existing files]' \
-'-r[Process input directory recursive]' \
-'--recursive[Process input directory recursive]' \
+'-f[Override existing files]' \
+'--override[Override existing files]' \
+'-v[Print status for every file]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
+':INPUT -- Input file or directory:_files' \
+':OUTPUT -- Output file or existing directory:_files' \
+":: :_dnglab__subcmd__convert_commands" \
+"*::: :->convert" \
+&& ret=0
+
+    case $state in
+    (convert)
+        words=($line[3] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:dnglab-convert-command-$line[3]:"
+        case $line[3] in
+            (raw)
+_arguments "${_arguments_options[@]}" : \
+'-d+[Log level]:level:(error warn info debug trace)' \
+'--loglevel=[Log level]:level:(error warn info debug trace)' \
+'--profile-path=[Directory with profile TOML files]:dir:_files' \
+'--config=[dnglab configuration file]:file:_files' \
 '-v[Print status for every file]' \
 '-h[Print help (see more with '\''--help'\'')]' \
 '--help[Print help (see more with '\''--help'\'')]' \
@@ -134,43 +115,68 @@ _arguments "${_arguments_options[@]}" : \
 ':OUTPUT -- Output file or existing directory:_files' \
 && ret=0
 ;;
-(ftpserver)
+(r)
 _arguments "${_arguments_options[@]}" : \
-'-p+[Convert profile name]:name:_default' \
-'--profile=[Convert profile name]:name:_default' \
-'-c+[Compression for raw image]:compression:(lossless lossy jxl deflate uncompressed)' \
-'--compression=[Compression for raw image]:compression:(lossless lossy jxl deflate uncompressed)' \
-'--ljpeg92-predictor=[LJPEG-92 predictor]:predictor:_default' \
-'--lossy-jpeg-quality=[JPEG quality for lossy compression (1-100)]:quality:_default' \
-'--jxl-distance=[JPEG XL distance (0-25), 0 is lossless]:distance:_default' \
-'--jxl-effort=[JPEG XL encoder effort (1-9)]:effort:_default' \
-'--jxl-decode-speed=[JPEG XL decoding speed for lossy compression (1-4)]:speed:_default' \
-'--dng-preview=[DNG include preview image]:preview:(true false)' \
-'--dng-thumbnail=[DNG include thumbnail image]:thumbnail:(true false)' \
-'--dng-force-preview=[Generate DNG preview image from raw data]:force_preview:(true false)' \
-'--dng-force-thumbnail=[Generate DNG thumbnail image from raw data]:force_thumbnail:(true false)' \
-'--max-dng-backward-version=[Maximum DNG backward version]:version:(1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.7.1)' \
-'--embed-raw=[Embed the raw file into DNG]:embedded:(true false)' \
-'--apply-dng-opcodes=[Apply DNG opcode lists to the image data instead of writing them to the DNG]:mode:(auto list1 list2 list3)' \
-'*--remove-dng-opcodes=[Remove DNG opcodes, as comma separated \[<list>\:\]<opcode> (e.g. WarpRectilinear,2\:GainMap)]:opcodes:_default' \
-'--artist=[Set the artist tag]:artist:_default' \
-'--copyright=[Set the copyright tag]:copyright:_default' \
-'--keep-mtime=[Keep mtime, read from EXIF with fallback to original file mtime]:keepmtime:(true false)' \
-'--image-index=[Select a specific image index (or '\''all'\'') if file is a image container]:index:_default' \
-'--crop=[DNG default crop]:crop:(best activearea none)' \
-'--port=[FTP listen port]:port:_default' \
-'--listen=[FTP listen address]:addr:_default' \
-'--keep-original=[Keep original raw]:keep:(true false)' \
 '-d+[Log level]:level:(error warn info debug trace)' \
 '--loglevel=[Log level]:level:(error warn info debug trace)' \
 '--profile-path=[Directory with profile TOML files]:dir:_files' \
 '--config=[dnglab configuration file]:file:_files' \
-'-f[Override existing files]' \
-'--override[Override existing files]' \
 '-v[Print status for every file]' \
 '-h[Print help (see more with '\''--help'\'')]' \
 '--help[Print help (see more with '\''--help'\'')]' \
+':INPUT -- Input file or directory:_files' \
 ':OUTPUT -- Output file or existing directory:_files' \
+&& ret=0
+;;
+(help)
+_arguments "${_arguments_options[@]}" : \
+":: :_dnglab__subcmd__convert__subcmd__help_commands" \
+"*::: :->help" \
+&& ret=0
+
+    case $state in
+    (help)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:dnglab-convert-help-command-$line[1]:"
+        case $line[1] in
+            (raw)
+_arguments "${_arguments_options[@]}" : \
+&& ret=0
+;;
+(help)
+_arguments "${_arguments_options[@]}" : \
+&& ret=0
+;;
+        esac
+    ;;
+esac
+;;
+        esac
+    ;;
+esac
+;;
+(reembed)
+_arguments "${_arguments_options[@]}" : \
+'--dng=[Input DNG file]:DNG:_files' \
+'--preview=[Edited preview JPEG]:JPEG:_files' \
+'--output=[Output DNG (default\: overwrite input)]:OUTPUT:_files' \
+'--embed-raw=[Embed original raw file]:embedded:(true false)' \
+'--compression=[Compression method for raw image]:compression:(lossless lossy jxl deflate uncompressed)' \
+'--crop=[Crop mode\: best, activearea, none]:crop:(best activearea none)' \
+'--predictor=[LJPEG92 predictor (1-7)]:predictor:_default' \
+'--preview-enabled=[Include preview in output DNG]:enabled:(true false)' \
+'--thumbnail-enabled=[Include thumbnail in output DNG]:enabled:(true false)' \
+'--artist=[Set artist tag]:artist:_default' \
+'--seed=[Deterministic seed for output bytes]:seed:_default' \
+'-d+[Log level]:level:(error warn info debug trace)' \
+'--loglevel=[Log level]:level:(error warn info debug trace)' \
+'--profile-path=[Directory with profile TOML files]:dir:_files' \
+'--config=[dnglab configuration file]:file:_files' \
+'--compress[Use lossless compression]' \
+'-v[Print status for every file]' \
+'-h[Print help (see more with '\''--help'\'')]' \
+'--help[Print help (see more with '\''--help'\'')]' \
 && ret=0
 ;;
 (cameras)
@@ -195,68 +201,6 @@ _arguments "${_arguments_options[@]}" : \
 '-v[Print status for every file]' \
 '-h[Print help (see more with '\''--help'\'')]' \
 '--help[Print help (see more with '\''--help'\'')]' \
-&& ret=0
-;;
-(makedng)
-_arguments "${_arguments_options[@]}" : \
-'-o+[Output DNG file path]:OUTPUT:_files' \
-'--output=[Output DNG file path]:OUTPUT:_files' \
-'-i+[Input files (raw, preview, exif, ...), index for map starts with 0]:INPUT:_files' \
-'--input=[Input files (raw, preview, exif, ...), index for map starts with 0]:INPUT:_files' \
-'--map=[Input usage map]:map:_default' \
-'--dng-backward-version=[DNG specification version]:version:(1.0 1.1 1.2 1.3 1.4 1.5 1.6 1.7 1.7.1)' \
-'--colorimetric-reference=[Reference for XYZ values]:reference:(scene output)' \
-'--unique-camera-model=[Unique camera model]:id:_default' \
-'--artist=[Set the Artist tag]:artist:_default' \
-'--make=[Set the Make tag]:make:_default' \
-'--model=[Set the Model tag]:model:_default' \
-'--matrix1=[Matrix 1]:MATRIX:(XYZ_sRGB_D50 XYZ_sRGB_D65 XYZ_AdobeRGB_D50 XYZ_AdobeRGB_D65 custom 3x3 matrix (comma seperated))' \
-'--matrix2=[Matrix 2]:MATRIX:(XYZ_sRGB_D50 XYZ_sRGB_D65 XYZ_AdobeRGB_D50 XYZ_AdobeRGB_D65 custom 3x3 matrix (comma seperated))' \
-'--matrix3=[Matrix 3]:MATRIX:(XYZ_sRGB_D50 XYZ_sRGB_D65 XYZ_AdobeRGB_D50 XYZ_AdobeRGB_D65 custom 3x3 matrix (comma seperated))' \
-'--illuminant1=[Illuminant 1]:ILLUMINANT:(Unknown A B C D50 D55 D65 D75)' \
-'--illuminant2=[Illuminant 2]:ILLUMINANT:(Unknown A B C D50 D55 D65 D75)' \
-'--illuminant3=[Illuminant 3]:ILLUMINANT:(Unknown A B C D50 D55 D65 D75)' \
-'--linearization=[Linearization table]:TABLE:(8bit_sRGB 8bit_sRGB_invert 16bit_sRGB 16bit_sRGB_invert 8bit_gamma1.8 8bit_gamma1.8_invert 8bit_gamma2.0 8bit_gamma2.0_invert 8bit_gamma2.2 8bit_gamma2.2_invert 8bit_gamma2.4 8bit_gamma2.4_invert 16bit_gamma1.8 16bit_gamma1.8_invert 16bit_gamma2.0 16bit_gamma2.0_invert 16bit_gamma2.2 16bit_gamma2.2_invert 16bit_gamma2.4 16bit_gamma2.4_invert custom table (comma seperated))' \
-'(--white-xy)--wb=[Whitebalance as-shot]:R,G,B:_default' \
-'--white-xy=[Whitebalance as-shot encoded as xy chromaticity coordinates]:x,y:(D50 D65 custom x,y value (comma seperated))' \
-'-d+[Log level]:level:(error warn info debug trace)' \
-'--loglevel=[Log level]:level:(error warn info debug trace)' \
-'--profile-path=[Directory with profile TOML files]:dir:_files' \
-'--config=[dnglab configuration file]:file:_files' \
-'-f[Override existing files]' \
-'--override[Override existing files]' \
-'-v[Print status for every file]' \
-'-h[Print help (see more with '\''--help'\'')]' \
-'--help[Print help (see more with '\''--help'\'')]' \
-&& ret=0
-;;
-(gui)
-_arguments "${_arguments_options[@]}" : \
-'-d+[Log level]:level:(error warn info debug trace)' \
-'--loglevel=[Log level]:level:(error warn info debug trace)' \
-'--profile-path=[Directory with profile TOML files]:dir:_files' \
-'--config=[dnglab configuration file]:file:_files' \
-'-v[Print status for every file]' \
-'-h[Print help (see more with '\''--help'\'')]' \
-'--help[Print help (see more with '\''--help'\'')]' \
-&& ret=0
-;;
-(extract)
-_arguments "${_arguments_options[@]}" : \
-'-d+[Log level]:level:(error warn info debug trace)' \
-'--loglevel=[Log level]:level:(error warn info debug trace)' \
-'--profile-path=[Directory with profile TOML files]:dir:_files' \
-'--config=[dnglab configuration file]:file:_files' \
-'--skipchecks[Skip integrity checks]' \
-'-r[Process input directory recursive]' \
-'--recursive[Process input directory recursive]' \
-'-f[Override existing files]' \
-'--override[Override existing files]' \
-'-v[Print status for every file]' \
-'-h[Print help (see more with '\''--help'\'')]' \
-'--help[Print help (see more with '\''--help'\'')]' \
-':INPUT -- Input file or directory:_files' \
-':OUTPUT -- Output file or existing directory:_files' \
 && ret=0
 ;;
 (help)
@@ -271,19 +215,27 @@ _arguments "${_arguments_options[@]}" : \
         (( CURRENT += 1 ))
         curcontext="${curcontext%:*:*}:dnglab-help-command-$line[1]:"
         case $line[1] in
-            (analyze)
+            (convert)
+_arguments "${_arguments_options[@]}" : \
+":: :_dnglab__subcmd__help__subcmd__convert_commands" \
+"*::: :->convert" \
+&& ret=0
+
+    case $state in
+    (convert)
+        words=($line[1] "${words[@]}")
+        (( CURRENT += 1 ))
+        curcontext="${curcontext%:*:*}:dnglab-help-convert-command-$line[1]:"
+        case $line[1] in
+            (raw)
 _arguments "${_arguments_options[@]}" : \
 && ret=0
 ;;
-(process-raw)
-_arguments "${_arguments_options[@]}" : \
-&& ret=0
+        esac
+    ;;
+esac
 ;;
-(convert)
-_arguments "${_arguments_options[@]}" : \
-&& ret=0
-;;
-(ftpserver)
+(reembed)
 _arguments "${_arguments_options[@]}" : \
 && ret=0
 ;;
@@ -292,18 +244,6 @@ _arguments "${_arguments_options[@]}" : \
 && ret=0
 ;;
 (lenses)
-_arguments "${_arguments_options[@]}" : \
-&& ret=0
-;;
-(makedng)
-_arguments "${_arguments_options[@]}" : \
-&& ret=0
-;;
-(gui)
-_arguments "${_arguments_options[@]}" : \
-&& ret=0
-;;
-(extract)
 _arguments "${_arguments_options[@]}" : \
 && ret=0
 ;;
@@ -323,23 +263,13 @@ esac
 (( $+functions[_dnglab_commands] )) ||
 _dnglab_commands() {
     local commands; commands=(
-'analyze:Analyze raw image' \
-'process-raw:' \
 'convert:Convert raw image(s) into dng format' \
-'ftpserver:Convert raw image(s) into dng format' \
+'reembed:Re-embed edited preview into an existing DNG' \
 'cameras:List supported cameras' \
 'lenses:List supported lenses' \
-'makedng:Lowlevel command to make a DNG file' \
-'gui:Start GUI (not implemented)' \
-'extract:Extract embedded original Raw from DNG' \
 'help:Print this message or the help of the given subcommand(s)' \
     )
     _describe -t commands 'dnglab commands' commands "$@"
-}
-(( $+functions[_dnglab__subcmd__analyze_commands] )) ||
-_dnglab__subcmd__analyze_commands() {
-    local commands; commands=()
-    _describe -t commands 'dnglab analyze commands' commands "$@"
 }
 (( $+functions[_dnglab__subcmd__cameras_commands] )) ||
 _dnglab__subcmd__cameras_commands() {
@@ -348,44 +278,46 @@ _dnglab__subcmd__cameras_commands() {
 }
 (( $+functions[_dnglab__subcmd__convert_commands] )) ||
 _dnglab__subcmd__convert_commands() {
-    local commands; commands=()
+    local commands; commands=(
+'raw:Convert raw images to DNG (deprecated\: same as convert)' \
+'r:Convert raw images to DNG (deprecated\: same as convert)' \
+'help:Print this message or the help of the given subcommand(s)' \
+    )
     _describe -t commands 'dnglab convert commands' commands "$@"
 }
-(( $+functions[_dnglab__subcmd__extract_commands] )) ||
-_dnglab__subcmd__extract_commands() {
-    local commands; commands=()
-    _describe -t commands 'dnglab extract commands' commands "$@"
+(( $+functions[_dnglab__subcmd__convert__subcmd__help_commands] )) ||
+_dnglab__subcmd__convert__subcmd__help_commands() {
+    local commands; commands=(
+'raw:Convert raw images to DNG (deprecated\: same as convert)' \
+'help:Print this message or the help of the given subcommand(s)' \
+    )
+    _describe -t commands 'dnglab convert help commands' commands "$@"
 }
-(( $+functions[_dnglab__subcmd__ftpserver_commands] )) ||
-_dnglab__subcmd__ftpserver_commands() {
+(( $+functions[_dnglab__subcmd__convert__subcmd__help__subcmd__help_commands] )) ||
+_dnglab__subcmd__convert__subcmd__help__subcmd__help_commands() {
     local commands; commands=()
-    _describe -t commands 'dnglab ftpserver commands' commands "$@"
+    _describe -t commands 'dnglab convert help help commands' commands "$@"
 }
-(( $+functions[_dnglab__subcmd__gui_commands] )) ||
-_dnglab__subcmd__gui_commands() {
+(( $+functions[_dnglab__subcmd__convert__subcmd__help__subcmd__raw_commands] )) ||
+_dnglab__subcmd__convert__subcmd__help__subcmd__raw_commands() {
     local commands; commands=()
-    _describe -t commands 'dnglab gui commands' commands "$@"
+    _describe -t commands 'dnglab convert help raw commands' commands "$@"
+}
+(( $+functions[_dnglab__subcmd__convert__subcmd__raw_commands] )) ||
+_dnglab__subcmd__convert__subcmd__raw_commands() {
+    local commands; commands=()
+    _describe -t commands 'dnglab convert raw commands' commands "$@"
 }
 (( $+functions[_dnglab__subcmd__help_commands] )) ||
 _dnglab__subcmd__help_commands() {
     local commands; commands=(
-'analyze:Analyze raw image' \
-'process-raw:' \
 'convert:Convert raw image(s) into dng format' \
-'ftpserver:Convert raw image(s) into dng format' \
+'reembed:Re-embed edited preview into an existing DNG' \
 'cameras:List supported cameras' \
 'lenses:List supported lenses' \
-'makedng:Lowlevel command to make a DNG file' \
-'gui:Start GUI (not implemented)' \
-'extract:Extract embedded original Raw from DNG' \
 'help:Print this message or the help of the given subcommand(s)' \
     )
     _describe -t commands 'dnglab help commands' commands "$@"
-}
-(( $+functions[_dnglab__subcmd__help__subcmd__analyze_commands] )) ||
-_dnglab__subcmd__help__subcmd__analyze_commands() {
-    local commands; commands=()
-    _describe -t commands 'dnglab help analyze commands' commands "$@"
 }
 (( $+functions[_dnglab__subcmd__help__subcmd__cameras_commands] )) ||
 _dnglab__subcmd__help__subcmd__cameras_commands() {
@@ -394,23 +326,15 @@ _dnglab__subcmd__help__subcmd__cameras_commands() {
 }
 (( $+functions[_dnglab__subcmd__help__subcmd__convert_commands] )) ||
 _dnglab__subcmd__help__subcmd__convert_commands() {
-    local commands; commands=()
+    local commands; commands=(
+'raw:Convert raw images to DNG (deprecated\: same as convert)' \
+    )
     _describe -t commands 'dnglab help convert commands' commands "$@"
 }
-(( $+functions[_dnglab__subcmd__help__subcmd__extract_commands] )) ||
-_dnglab__subcmd__help__subcmd__extract_commands() {
+(( $+functions[_dnglab__subcmd__help__subcmd__convert__subcmd__raw_commands] )) ||
+_dnglab__subcmd__help__subcmd__convert__subcmd__raw_commands() {
     local commands; commands=()
-    _describe -t commands 'dnglab help extract commands' commands "$@"
-}
-(( $+functions[_dnglab__subcmd__help__subcmd__ftpserver_commands] )) ||
-_dnglab__subcmd__help__subcmd__ftpserver_commands() {
-    local commands; commands=()
-    _describe -t commands 'dnglab help ftpserver commands' commands "$@"
-}
-(( $+functions[_dnglab__subcmd__help__subcmd__gui_commands] )) ||
-_dnglab__subcmd__help__subcmd__gui_commands() {
-    local commands; commands=()
-    _describe -t commands 'dnglab help gui commands' commands "$@"
+    _describe -t commands 'dnglab help convert raw commands' commands "$@"
 }
 (( $+functions[_dnglab__subcmd__help__subcmd__help_commands] )) ||
 _dnglab__subcmd__help__subcmd__help_commands() {
@@ -422,30 +346,20 @@ _dnglab__subcmd__help__subcmd__lenses_commands() {
     local commands; commands=()
     _describe -t commands 'dnglab help lenses commands' commands "$@"
 }
-(( $+functions[_dnglab__subcmd__help__subcmd__makedng_commands] )) ||
-_dnglab__subcmd__help__subcmd__makedng_commands() {
+(( $+functions[_dnglab__subcmd__help__subcmd__reembed_commands] )) ||
+_dnglab__subcmd__help__subcmd__reembed_commands() {
     local commands; commands=()
-    _describe -t commands 'dnglab help makedng commands' commands "$@"
-}
-(( $+functions[_dnglab__subcmd__help__subcmd__process-raw_commands] )) ||
-_dnglab__subcmd__help__subcmd__process-raw_commands() {
-    local commands; commands=()
-    _describe -t commands 'dnglab help process-raw commands' commands "$@"
+    _describe -t commands 'dnglab help reembed commands' commands "$@"
 }
 (( $+functions[_dnglab__subcmd__lenses_commands] )) ||
 _dnglab__subcmd__lenses_commands() {
     local commands; commands=()
     _describe -t commands 'dnglab lenses commands' commands "$@"
 }
-(( $+functions[_dnglab__subcmd__makedng_commands] )) ||
-_dnglab__subcmd__makedng_commands() {
+(( $+functions[_dnglab__subcmd__reembed_commands] )) ||
+_dnglab__subcmd__reembed_commands() {
     local commands; commands=()
-    _describe -t commands 'dnglab makedng commands' commands "$@"
-}
-(( $+functions[_dnglab__subcmd__process-raw_commands] )) ||
-_dnglab__subcmd__process-raw_commands() {
-    local commands; commands=()
-    _describe -t commands 'dnglab process-raw commands' commands "$@"
+    _describe -t commands 'dnglab reembed commands' commands "$@"
 }
 
 if [ "$funcstack[1]" = "_dnglab" ]; then

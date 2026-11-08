@@ -34,59 +34,58 @@ complete -c dnglab -n "__fish_dnglab_needs_command" -l config -d 'dnglab configu
 complete -c dnglab -n "__fish_dnglab_needs_command" -s v -d 'Print status for every file'
 complete -c dnglab -n "__fish_dnglab_needs_command" -s h -l help -d 'Print help (see more with \'--help\')'
 complete -c dnglab -n "__fish_dnglab_needs_command" -s V -l version -d 'Print version'
-complete -c dnglab -n "__fish_dnglab_needs_command" -f -a "analyze" -d 'Analyze raw image'
-complete -c dnglab -n "__fish_dnglab_needs_command" -f -a "process-raw"
 complete -c dnglab -n "__fish_dnglab_needs_command" -f -a "convert" -d 'Convert raw image(s) into dng format'
-complete -c dnglab -n "__fish_dnglab_needs_command" -f -a "ftpserver" -d 'Convert raw image(s) into dng format'
+complete -c dnglab -n "__fish_dnglab_needs_command" -f -a "reembed" -d 'Re-embed edited preview into an existing DNG'
 complete -c dnglab -n "__fish_dnglab_needs_command" -f -a "cameras" -d 'List supported cameras'
 complete -c dnglab -n "__fish_dnglab_needs_command" -f -a "lenses" -d 'List supported lenses'
-complete -c dnglab -n "__fish_dnglab_needs_command" -f -a "makedng" -d 'Lowlevel command to make a DNG file'
-complete -c dnglab -n "__fish_dnglab_needs_command" -f -a "gui" -d 'Start GUI (not implemented)'
-complete -c dnglab -n "__fish_dnglab_needs_command" -f -a "extract" -d 'Extract embedded original Raw from DNG'
 complete -c dnglab -n "__fish_dnglab_needs_command" -f -a "help" -d 'Print this message or the help of the given subcommand(s)'
-complete -c dnglab -n "__fish_dnglab_using_subcommand analyze" -s d -l loglevel -d 'Log level' -r -f -a "error\t''
-warn\t''
-info\t''
-debug\t''
-trace\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand analyze" -l profile-path -d 'Directory with profile TOML files' -r -F
-complete -c dnglab -n "__fish_dnglab_using_subcommand analyze" -l config -d 'dnglab configuration file' -r -F
-complete -c dnglab -n "__fish_dnglab_using_subcommand analyze" -l raw-pixel
-complete -c dnglab -n "__fish_dnglab_using_subcommand analyze" -l full-pixel -d 'Write uncompressed full pixel data to STDOUT'
-complete -c dnglab -n "__fish_dnglab_using_subcommand analyze" -l preview-pixel -d 'Write uncompressed preview pixel data to STDOUT'
-complete -c dnglab -n "__fish_dnglab_using_subcommand analyze" -l thumbnail-pixel -d 'Write uncompressed preview pixel data to STDOUT'
-complete -c dnglab -n "__fish_dnglab_using_subcommand analyze" -l raw-checksum -d 'Write MD5 checksum of raw pixels to STDOUT'
-complete -c dnglab -n "__fish_dnglab_using_subcommand analyze" -l full-checksum -d 'Write MD5 checksum of full pixels to STDOUT'
-complete -c dnglab -n "__fish_dnglab_using_subcommand analyze" -l preview-checksum -d 'Write MD5 checksum of preview pixels to STDOUT'
-complete -c dnglab -n "__fish_dnglab_using_subcommand analyze" -l thumbnail-checksum -d 'Write MD5 checksum of thumbnail pixels to STDOUT'
-complete -c dnglab -n "__fish_dnglab_using_subcommand analyze" -l srgb -d 'Write sRGB 16-bit TIFF to STDOUT'
-complete -c dnglab -n "__fish_dnglab_using_subcommand analyze" -l meta -d 'Write metadata to STDOUT'
-complete -c dnglab -n "__fish_dnglab_using_subcommand analyze" -l structure -d 'Write file structure to STDOUT'
-complete -c dnglab -n "__fish_dnglab_using_subcommand analyze" -l summary -d 'Write summary information for file to STDOUT'
-complete -c dnglab -n "__fish_dnglab_using_subcommand analyze" -l camera-profiles -d 'Write camera profiles to STDOUT (plain text, JSON or YAML)'
-complete -c dnglab -n "__fish_dnglab_using_subcommand analyze" -l json -d 'Format metadata as JSON'
-complete -c dnglab -n "__fish_dnglab_using_subcommand analyze" -l yaml -d 'Format metadata as YAML'
-complete -c dnglab -n "__fish_dnglab_using_subcommand analyze" -s v -d 'Print status for every file'
-complete -c dnglab -n "__fish_dnglab_using_subcommand analyze" -s h -l help -d 'Print help (see more with \'--help\')'
-complete -c dnglab -n "__fish_dnglab_using_subcommand process-raw" -l remove-dng-opcodes -d 'Remove DNG opcodes, as comma separated [<list>:]<opcode> (e.g. WarpRectilinear,2:GainMap)' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand process-raw" -l artist -d 'Set the artist tag' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand process-raw" -l keep-mtime -d 'Keep mtime, read from EXIF with fallback to original file mtime' -r -f -a "true\t''
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -s p -l profile -d 'Convert profile name' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -s c -l compression -d 'Compression for raw image' -r -f -a "lossless\t''
+lossy\t''
+jxl\t''
+deflate\t''
+uncompressed\t''"
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l ljpeg92-predictor -d 'LJPEG-92 predictor' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l lossy-jpeg-quality -d 'JPEG quality for lossy compression (1-100)' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l jxl-distance -d 'JPEG XL distance (0-25), 0 is lossless' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l jxl-effort -d 'JPEG XL encoder effort (1-9)' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l jxl-decode-speed -d 'JPEG XL decoding speed for lossy compression (1-4)' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l dng-preview -d 'DNG include preview image' -r -f -a "true\t''
 false\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand process-raw" -l image-index -d 'Select a specific image index (or \'all\') if file is a image container' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand process-raw" -l crop -d 'Crop of the image: DefaultCrop (best), ActiveArea or none' -r -f -a "best\t''
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l dng-thumbnail -d 'DNG include thumbnail image' -r -f -a "true\t''
+false\t''"
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l dng-force-preview -d 'Generate DNG preview image from raw data' -r -f -a "true\t''
+false\t''"
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l dng-force-thumbnail -d 'Generate DNG thumbnail image from raw data' -r -f -a "true\t''
+false\t''"
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l max-dng-backward-version -d 'Maximum DNG backward version' -r -f -a "1.0\t''
+1.1\t''
+1.2\t''
+1.3\t''
+1.4\t''
+1.5\t''
+1.6\t''
+1.7\t''
+1.7.1\t''"
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l embed-raw -d 'Embed the raw file into DNG' -r -f -a "true\t''
+false\t''"
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l apply-dng-opcodes -d 'Apply DNG opcode lists to the image data instead of writing them to the DNG' -r -f -a "auto\t''
+list1\t''
+list2\t''
+list3\t''"
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l remove-dng-opcodes -d 'Remove DNG opcodes, as comma separated [<list>:]<opcode> (e.g. WarpRectilinear,2:GainMap)' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l artist -d 'Set the artist tag' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l copyright -d 'Set the copyright tag' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l keep-mtime -d 'Keep mtime, read from EXIF with fallback to original file mtime' -r -f -a "true\t''
+false\t''"
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l image-index -d 'Select a specific image index (or \'all\') if file is a image container' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l crop -d 'DNG default crop' -r -f -a "best\t''
 activearea\t''
 none\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand process-raw" -l format -d 'Output image format, defaults to the OUTPUT file extension or tif' -r -f -a "tif\t''
-jpeg\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand process-raw" -l color-space -d 'Color space of the image' -r -f -a "srgb\t''
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l colorspace -d 'Colorspace of resulting DNG image' -r -f -a "srgb\t''
 adobergb\t''
 prophoto\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand process-raw" -l jpeg-quality -d 'JPEG quality (1-100)' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand process-raw" -l denoise-luma -d 'Strength of the luma noise reduction (0-4), 0 is off, 1 is a full reduction [default: 0.25]' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand process-raw" -l denoise-chroma -d 'Strength of the chroma noise reduction (0-4), 0 is off, 1 is a full reduction [default: 0.5]' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand process-raw" -l sharpen -d 'Strength of the sharpening (0-2), 0 is off, 1 is the classic Laplacian filter [default: 0.2]' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand process-raw" -l exposure -d 'Change the exposure by this value in EV, e.g. -1.2. A negative value keeps white [default: 0]' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand process-raw" -l steps -d 'Apply only these processing steps of the rendering, as comma separated list. Without it the default steps are applied' -r -f -a "rescale\t''
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l render-steps -d 'Render pipeline steps' -r -f -a "rescale\t''
 demosaic\t''
 fujirotate\t''
 cropactivearea\t''
@@ -103,7 +102,7 @@ exposure\t''
 autoexposure\t''
 sharpen\t''
 transferfunction\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand process-raw" -l skip-steps -d 'Skip these processing steps of the rendering, as comma separated list (e.g. tonecurve,denoise,sharpen). Takes priority over --steps' -r -f -a "rescale\t''
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l hide-steps -d 'Hide render pipeline steps' -r -f -a "rescale\t''
 demosaic\t''
 fujirotate\t''
 cropactivearea\t''
@@ -120,131 +119,88 @@ exposure\t''
 autoexposure\t''
 sharpen\t''
 transferfunction\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand process-raw" -s d -l loglevel -d 'Log level' -r -f -a "error\t''
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l denoise -d 'Amount of denoising applied to rendered image (0.00..=4.00)' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l sharpen -d 'Amount of sharpening applied to rendered image (0.00..=2.00)' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l sharpness-radius -d 'Radius in px of sharpening mask' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l saturation -d 'Change hue and saturation of the rendered image' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l contrast -d 'Change the exposure (+EV) and contrast of the rendered image' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l highlight -d 'Recover highlights (0.00..=1.00)' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l blackpoint -d 'Adjust blackpoint (0.0..=1.0)' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l gradient -d 'Tint the gradient along a certain axis (x y)' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l tint -d 'Set white balance via temperature/tint' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l whitebalance-rgb -d 'Manual whitebalance RGB values' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l exposure -d 'Additional manual exposure adjustment in EV' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l chromatic-aberration -d 'Correct chromatic aberration (0.00..=1.00)' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l vignetting -d 'Correct vignetting (0.00..=1.00)' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l distorting -d 'Correct distortion (0.00..=1.00)' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l camera-profile -d 'Set custom camera profile' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -s t -l linearization -d 'Linearization table' -r -F
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l wb -d 'Whitebalance as-shot' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l white-xy -d 'Whitebalance as-shot encoded as xy chromaticity coordinates' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -s d -l loglevel -d 'Log level' -r -f -a "error\t''
 warn\t''
 info\t''
 debug\t''
 trace\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand process-raw" -l profile-path -d 'Directory with profile TOML files' -r -F
-complete -c dnglab -n "__fish_dnglab_using_subcommand process-raw" -l config -d 'dnglab configuration file' -r -F
-complete -c dnglab -n "__fish_dnglab_using_subcommand process-raw" -l crop-transparent -d 'Crop to the largest rectangle without transparent pixels of the DNG transparency mask'
-complete -c dnglab -n "__fish_dnglab_using_subcommand process-raw" -l auto-exposure -d 'Correct the exposure by an estimate from the image, --exposure is added to it'
-complete -c dnglab -n "__fish_dnglab_using_subcommand process-raw" -s f -l override -d 'Override existing files'
-complete -c dnglab -n "__fish_dnglab_using_subcommand process-raw" -s r -l recursive -d 'Process input directory recursive'
-complete -c dnglab -n "__fish_dnglab_using_subcommand process-raw" -s v -d 'Print status for every file'
-complete -c dnglab -n "__fish_dnglab_using_subcommand process-raw" -s h -l help -d 'Print help (see more with \'--help\')'
-complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -s p -l profile -d 'Convert profile name' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -s c -l compression -d 'Compression for raw image' -r -f -a "lossless\t''
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l profile-path -d 'Directory with profile TOML files' -r -F
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -l config -d 'dnglab configuration file' -r -F
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -s f -l override -d 'Override existing files'
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -s f -l override -d 'Override existing files'
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -s v -d 'Print status for every file'
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -s h -l help -d 'Print help (see more with \'--help\')'
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -a "raw" -d 'Convert raw images to DNG (deprecated: same as convert)'
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -a "r" -d 'Convert raw images to DNG (deprecated: same as convert)'
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and not __fish_seen_subcommand_from raw r help" -a "help" -d 'Print this message or the help of the given subcommand(s)'
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and __fish_seen_subcommand_from raw" -s d -l loglevel -d 'Log level' -r -f -a "error\t''
+warn\t''
+info\t''
+debug\t''
+trace\t''"
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and __fish_seen_subcommand_from raw" -l profile-path -d 'Directory with profile TOML files' -r -F
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and __fish_seen_subcommand_from raw" -l config -d 'dnglab configuration file' -r -F
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and __fish_seen_subcommand_from raw" -s v -d 'Print status for every file'
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and __fish_seen_subcommand_from raw" -s h -l help -d 'Print help (see more with \'--help\')'
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and __fish_seen_subcommand_from r" -s d -l loglevel -d 'Log level' -r -f -a "error\t''
+warn\t''
+info\t''
+debug\t''
+trace\t''"
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and __fish_seen_subcommand_from r" -l profile-path -d 'Directory with profile TOML files' -r -F
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and __fish_seen_subcommand_from r" -l config -d 'dnglab configuration file' -r -F
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and __fish_seen_subcommand_from r" -s v -d 'Print status for every file'
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and __fish_seen_subcommand_from r" -s h -l help -d 'Print help (see more with \'--help\')'
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and __fish_seen_subcommand_from help" -f -a "raw" -d 'Convert raw images to DNG (deprecated: same as convert)'
+complete -c dnglab -n "__fish_dnglab_using_subcommand convert; and __fish_seen_subcommand_from help" -f -a "help" -d 'Print this message or the help of the given subcommand(s)'
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -l dng -d 'Input DNG file' -r -F
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -l preview -d 'Edited preview JPEG' -r -F
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -l output -d 'Output DNG (default: overwrite input)' -r -F
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -l embed-raw -d 'Embed original raw file' -r -f -a "true\t''
+false\t''"
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -l compression -d 'Compression method for raw image' -r -f -a "lossless\t''
 lossy\t''
 jxl\t''
 deflate\t''
 uncompressed\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -l ljpeg92-predictor -d 'LJPEG-92 predictor' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -l lossy-jpeg-quality -d 'JPEG quality for lossy compression (1-100)' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -l jxl-distance -d 'JPEG XL distance (0-25), 0 is lossless' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -l jxl-effort -d 'JPEG XL encoder effort (1-9)' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -l jxl-decode-speed -d 'JPEG XL decoding speed for lossy compression (1-4)' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -l dng-preview -d 'DNG include preview image' -r -f -a "true\t''
-false\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -l dng-thumbnail -d 'DNG include thumbnail image' -r -f -a "true\t''
-false\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -l dng-force-preview -d 'Generate DNG preview image from raw data' -r -f -a "true\t''
-false\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -l dng-force-thumbnail -d 'Generate DNG thumbnail image from raw data' -r -f -a "true\t''
-false\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -l max-dng-backward-version -d 'Maximum DNG backward version' -r -f -a "1.0\t''
-1.1\t''
-1.2\t''
-1.3\t''
-1.4\t''
-1.5\t''
-1.6\t''
-1.7\t''
-1.7.1\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -l embed-raw -d 'Embed the raw file into DNG' -r -f -a "true\t''
-false\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -l apply-dng-opcodes -d 'Apply DNG opcode lists to the image data instead of writing them to the DNG' -r -f -a "auto\t''
-list1\t''
-list2\t''
-list3\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -l remove-dng-opcodes -d 'Remove DNG opcodes, as comma separated [<list>:]<opcode> (e.g. WarpRectilinear,2:GainMap)' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -l artist -d 'Set the artist tag' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -l copyright -d 'Set the copyright tag' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -l keep-mtime -d 'Keep mtime, read from EXIF with fallback to original file mtime' -r -f -a "true\t''
-false\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -l image-index -d 'Select a specific image index (or \'all\') if file is a image container' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -l crop -d 'DNG default crop' -r -f -a "best\t''
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -l crop -d 'Crop mode: best, activearea, none' -r -f -a "best\t''
 activearea\t''
 none\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -s j -l jobs -d 'Number of files to convert in parallel (0 = auto)' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -s d -l loglevel -d 'Log level' -r -f -a "error\t''
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -l predictor -d 'LJPEG92 predictor (1-7)' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -l preview-enabled -d 'Include preview in output DNG' -r -f -a "true\t''
+false\t''"
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -l thumbnail-enabled -d 'Include thumbnail in output DNG' -r -f -a "true\t''
+false\t''"
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -l artist -d 'Set artist tag' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -l seed -d 'Deterministic seed for output bytes' -r
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -s d -l loglevel -d 'Log level' -r -f -a "error\t''
 warn\t''
 info\t''
 debug\t''
 trace\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -l profile-path -d 'Directory with profile TOML files' -r -F
-complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -l config -d 'dnglab configuration file' -r -F
-complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -s f -l override -d 'Override existing files'
-complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -s r -l recursive -d 'Process input directory recursive'
-complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -s v -d 'Print status for every file'
-complete -c dnglab -n "__fish_dnglab_using_subcommand convert" -s h -l help -d 'Print help (see more with \'--help\')'
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -s p -l profile -d 'Convert profile name' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -s c -l compression -d 'Compression for raw image' -r -f -a "lossless\t''
-lossy\t''
-jxl\t''
-deflate\t''
-uncompressed\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -l ljpeg92-predictor -d 'LJPEG-92 predictor' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -l lossy-jpeg-quality -d 'JPEG quality for lossy compression (1-100)' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -l jxl-distance -d 'JPEG XL distance (0-25), 0 is lossless' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -l jxl-effort -d 'JPEG XL encoder effort (1-9)' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -l jxl-decode-speed -d 'JPEG XL decoding speed for lossy compression (1-4)' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -l dng-preview -d 'DNG include preview image' -r -f -a "true\t''
-false\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -l dng-thumbnail -d 'DNG include thumbnail image' -r -f -a "true\t''
-false\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -l dng-force-preview -d 'Generate DNG preview image from raw data' -r -f -a "true\t''
-false\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -l dng-force-thumbnail -d 'Generate DNG thumbnail image from raw data' -r -f -a "true\t''
-false\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -l max-dng-backward-version -d 'Maximum DNG backward version' -r -f -a "1.0\t''
-1.1\t''
-1.2\t''
-1.3\t''
-1.4\t''
-1.5\t''
-1.6\t''
-1.7\t''
-1.7.1\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -l embed-raw -d 'Embed the raw file into DNG' -r -f -a "true\t''
-false\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -l apply-dng-opcodes -d 'Apply DNG opcode lists to the image data instead of writing them to the DNG' -r -f -a "auto\t''
-list1\t''
-list2\t''
-list3\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -l remove-dng-opcodes -d 'Remove DNG opcodes, as comma separated [<list>:]<opcode> (e.g. WarpRectilinear,2:GainMap)' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -l artist -d 'Set the artist tag' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -l copyright -d 'Set the copyright tag' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -l keep-mtime -d 'Keep mtime, read from EXIF with fallback to original file mtime' -r -f -a "true\t''
-false\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -l image-index -d 'Select a specific image index (or \'all\') if file is a image container' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -l crop -d 'DNG default crop' -r -f -a "best\t''
-activearea\t''
-none\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -l port -d 'FTP listen port' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -l listen -d 'FTP listen address' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -l keep-original -d 'Keep original raw' -r -f -a "true\t''
-false\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -s d -l loglevel -d 'Log level' -r -f -a "error\t''
-warn\t''
-info\t''
-debug\t''
-trace\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -l profile-path -d 'Directory with profile TOML files' -r -F
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -l config -d 'dnglab configuration file' -r -F
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -s f -l override -d 'Override existing files'
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -s v -d 'Print status for every file'
-complete -c dnglab -n "__fish_dnglab_using_subcommand ftpserver" -s h -l help -d 'Print help (see more with \'--help\')'
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -l profile-path -d 'Directory with profile TOML files' -r -F
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -l config -d 'dnglab configuration file' -r -F
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -l compress -d 'Use lossless compression'
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -s v -d 'Print status for every file'
+complete -c dnglab -n "__fish_dnglab_using_subcommand reembed" -s h -l help -d 'Print help (see more with \'--help\')'
 complete -c dnglab -n "__fish_dnglab_using_subcommand cameras" -s d -l loglevel -d 'Log level' -r -f -a "error\t''
 warn\t''
 info\t''
@@ -265,126 +221,9 @@ complete -c dnglab -n "__fish_dnglab_using_subcommand lenses" -l config -d 'dngl
 complete -c dnglab -n "__fish_dnglab_using_subcommand lenses" -l md -d 'Markdown format output'
 complete -c dnglab -n "__fish_dnglab_using_subcommand lenses" -s v -d 'Print status for every file'
 complete -c dnglab -n "__fish_dnglab_using_subcommand lenses" -s h -l help -d 'Print help (see more with \'--help\')'
-complete -c dnglab -n "__fish_dnglab_using_subcommand makedng" -s o -l output -d 'Output DNG file path' -r -F
-complete -c dnglab -n "__fish_dnglab_using_subcommand makedng" -s i -l input -d 'Input files (raw, preview, exif, ...), index for map starts with 0' -r -F
-complete -c dnglab -n "__fish_dnglab_using_subcommand makedng" -l map -d 'Input usage map' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand makedng" -l dng-backward-version -d 'DNG specification version' -r -f -a "1.0\t''
-1.1\t''
-1.2\t''
-1.3\t''
-1.4\t''
-1.5\t''
-1.6\t''
-1.7\t''
-1.7.1\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand makedng" -l colorimetric-reference -d 'Reference for XYZ values' -r -f -a "scene\t''
-output\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand makedng" -l unique-camera-model -d 'Unique camera model' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand makedng" -l artist -d 'Set the Artist tag' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand makedng" -l make -d 'Set the Make tag' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand makedng" -l model -d 'Set the Model tag' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand makedng" -l matrix1 -d 'Matrix 1' -r -f -a "XYZ_sRGB_D50\t''
-XYZ_sRGB_D65\t''
-XYZ_AdobeRGB_D50\t''
-XYZ_AdobeRGB_D65\t''
-custom 3x3 matrix (comma seperated)\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand makedng" -l matrix2 -d 'Matrix 2' -r -f -a "XYZ_sRGB_D50\t''
-XYZ_sRGB_D65\t''
-XYZ_AdobeRGB_D50\t''
-XYZ_AdobeRGB_D65\t''
-custom 3x3 matrix (comma seperated)\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand makedng" -l matrix3 -d 'Matrix 3' -r -f -a "XYZ_sRGB_D50\t''
-XYZ_sRGB_D65\t''
-XYZ_AdobeRGB_D50\t''
-XYZ_AdobeRGB_D65\t''
-custom 3x3 matrix (comma seperated)\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand makedng" -l illuminant1 -d 'Illuminant 1' -r -f -a "Unknown\t''
-A\t''
-B\t''
-C\t''
-D50\t''
-D55\t''
-D65\t''
-D75\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand makedng" -l illuminant2 -d 'Illuminant 2' -r -f -a "Unknown\t''
-A\t''
-B\t''
-C\t''
-D50\t''
-D55\t''
-D65\t''
-D75\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand makedng" -l illuminant3 -d 'Illuminant 3' -r -f -a "Unknown\t''
-A\t''
-B\t''
-C\t''
-D50\t''
-D55\t''
-D65\t''
-D75\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand makedng" -l linearization -d 'Linearization table' -r -f -a "8bit_sRGB\t''
-8bit_sRGB_invert\t''
-16bit_sRGB\t''
-16bit_sRGB_invert\t''
-8bit_gamma1.8\t''
-8bit_gamma1.8_invert\t''
-8bit_gamma2.0\t''
-8bit_gamma2.0_invert\t''
-8bit_gamma2.2\t''
-8bit_gamma2.2_invert\t''
-8bit_gamma2.4\t''
-8bit_gamma2.4_invert\t''
-16bit_gamma1.8\t''
-16bit_gamma1.8_invert\t''
-16bit_gamma2.0\t''
-16bit_gamma2.0_invert\t''
-16bit_gamma2.2\t''
-16bit_gamma2.2_invert\t''
-16bit_gamma2.4\t''
-16bit_gamma2.4_invert\t''
-custom table (comma seperated)\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand makedng" -l wb -d 'Whitebalance as-shot' -r
-complete -c dnglab -n "__fish_dnglab_using_subcommand makedng" -l white-xy -d 'Whitebalance as-shot encoded as xy chromaticity coordinates' -r -f -a "D50\t''
-D65\t''
-custom x\,y value (comma seperated)\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand makedng" -s d -l loglevel -d 'Log level' -r -f -a "error\t''
-warn\t''
-info\t''
-debug\t''
-trace\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand makedng" -l profile-path -d 'Directory with profile TOML files' -r -F
-complete -c dnglab -n "__fish_dnglab_using_subcommand makedng" -l config -d 'dnglab configuration file' -r -F
-complete -c dnglab -n "__fish_dnglab_using_subcommand makedng" -s f -l override -d 'Override existing files'
-complete -c dnglab -n "__fish_dnglab_using_subcommand makedng" -s v -d 'Print status for every file'
-complete -c dnglab -n "__fish_dnglab_using_subcommand makedng" -s h -l help -d 'Print help (see more with \'--help\')'
-complete -c dnglab -n "__fish_dnglab_using_subcommand gui" -s d -l loglevel -d 'Log level' -r -f -a "error\t''
-warn\t''
-info\t''
-debug\t''
-trace\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand gui" -l profile-path -d 'Directory with profile TOML files' -r -F
-complete -c dnglab -n "__fish_dnglab_using_subcommand gui" -l config -d 'dnglab configuration file' -r -F
-complete -c dnglab -n "__fish_dnglab_using_subcommand gui" -s v -d 'Print status for every file'
-complete -c dnglab -n "__fish_dnglab_using_subcommand gui" -s h -l help -d 'Print help (see more with \'--help\')'
-complete -c dnglab -n "__fish_dnglab_using_subcommand extract" -s d -l loglevel -d 'Log level' -r -f -a "error\t''
-warn\t''
-info\t''
-debug\t''
-trace\t''"
-complete -c dnglab -n "__fish_dnglab_using_subcommand extract" -l profile-path -d 'Directory with profile TOML files' -r -F
-complete -c dnglab -n "__fish_dnglab_using_subcommand extract" -l config -d 'dnglab configuration file' -r -F
-complete -c dnglab -n "__fish_dnglab_using_subcommand extract" -l skipchecks -d 'Skip integrity checks'
-complete -c dnglab -n "__fish_dnglab_using_subcommand extract" -s r -l recursive -d 'Process input directory recursive'
-complete -c dnglab -n "__fish_dnglab_using_subcommand extract" -s f -l override -d 'Override existing files'
-complete -c dnglab -n "__fish_dnglab_using_subcommand extract" -s v -d 'Print status for every file'
-complete -c dnglab -n "__fish_dnglab_using_subcommand extract" -s h -l help -d 'Print help (see more with \'--help\')'
-complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert ftpserver cameras lenses makedng gui extract help" -f -a "analyze" -d 'Analyze raw image'
-complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert ftpserver cameras lenses makedng gui extract help" -f -a "process-raw"
-complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert ftpserver cameras lenses makedng gui extract help" -f -a "convert" -d 'Convert raw image(s) into dng format'
-complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert ftpserver cameras lenses makedng gui extract help" -f -a "ftpserver" -d 'Convert raw image(s) into dng format'
-complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert ftpserver cameras lenses makedng gui extract help" -f -a "cameras" -d 'List supported cameras'
-complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert ftpserver cameras lenses makedng gui extract help" -f -a "lenses" -d 'List supported lenses'
-complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert ftpserver cameras lenses makedng gui extract help" -f -a "makedng" -d 'Lowlevel command to make a DNG file'
-complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert ftpserver cameras lenses makedng gui extract help" -f -a "gui" -d 'Start GUI (not implemented)'
-complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert ftpserver cameras lenses makedng gui extract help" -f -a "extract" -d 'Extract embedded original Raw from DNG'
-complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from analyze process-raw convert ftpserver cameras lenses makedng gui extract help" -f -a "help" -d 'Print this message or the help of the given subcommand(s)'
+complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from convert reembed cameras lenses help" -f -a "convert" -d 'Convert raw image(s) into dng format'
+complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from convert reembed cameras lenses help" -f -a "reembed" -d 'Re-embed edited preview into an existing DNG'
+complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from convert reembed cameras lenses help" -f -a "cameras" -d 'List supported cameras'
+complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from convert reembed cameras lenses help" -f -a "lenses" -d 'List supported lenses'
+complete -c dnglab -n "__fish_dnglab_using_subcommand help; and not __fish_seen_subcommand_from convert reembed cameras lenses help" -f -a "help" -d 'Print this message or the help of the given subcommand(s)'
+complete -c dnglab -n "__fish_dnglab_using_subcommand help; and __fish_seen_subcommand_from convert" -f -a "raw" -d 'Convert raw images to DNG (deprecated: same as convert)'

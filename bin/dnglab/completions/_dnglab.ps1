@@ -30,71 +30,11 @@ Register-ArgumentCompleter -Native -CommandName 'dnglab' -ScriptBlock {
             [CompletionResult]::new('--help', '--help', [CompletionResultType]::ParameterName, 'Print help (see more with ''--help'')')
             [CompletionResult]::new('-V', '-V ', [CompletionResultType]::ParameterName, 'Print version')
             [CompletionResult]::new('--version', '--version', [CompletionResultType]::ParameterName, 'Print version')
-            [CompletionResult]::new('analyze', 'analyze', [CompletionResultType]::ParameterValue, 'Analyze raw image')
-            [CompletionResult]::new('process-raw', 'process-raw', [CompletionResultType]::ParameterValue, 'process-raw')
             [CompletionResult]::new('convert', 'convert', [CompletionResultType]::ParameterValue, 'Convert raw image(s) into dng format')
-            [CompletionResult]::new('ftpserver', 'ftpserver', [CompletionResultType]::ParameterValue, 'Convert raw image(s) into dng format')
+            [CompletionResult]::new('reembed', 'reembed', [CompletionResultType]::ParameterValue, 'Re-embed edited preview into an existing DNG')
             [CompletionResult]::new('cameras', 'cameras', [CompletionResultType]::ParameterValue, 'List supported cameras')
             [CompletionResult]::new('lenses', 'lenses', [CompletionResultType]::ParameterValue, 'List supported lenses')
-            [CompletionResult]::new('makedng', 'makedng', [CompletionResultType]::ParameterValue, 'Lowlevel command to make a DNG file')
-            [CompletionResult]::new('gui', 'gui', [CompletionResultType]::ParameterValue, 'Start GUI (not implemented)')
-            [CompletionResult]::new('extract', 'extract', [CompletionResultType]::ParameterValue, 'Extract embedded original Raw from DNG')
             [CompletionResult]::new('help', 'help', [CompletionResultType]::ParameterValue, 'Print this message or the help of the given subcommand(s)')
-            break
-        }
-        'dnglab;analyze' {
-            [CompletionResult]::new('-d', '-d', [CompletionResultType]::ParameterName, 'Log level')
-            [CompletionResult]::new('--loglevel', '--loglevel', [CompletionResultType]::ParameterName, 'Log level')
-            [CompletionResult]::new('--profile-path', '--profile-path', [CompletionResultType]::ParameterName, 'Directory with profile TOML files')
-            [CompletionResult]::new('--config', '--config', [CompletionResultType]::ParameterName, 'dnglab configuration file')
-            [CompletionResult]::new('--raw-pixel', '--raw-pixel', [CompletionResultType]::ParameterName, 'raw-pixel')
-            [CompletionResult]::new('--full-pixel', '--full-pixel', [CompletionResultType]::ParameterName, 'Write uncompressed full pixel data to STDOUT')
-            [CompletionResult]::new('--preview-pixel', '--preview-pixel', [CompletionResultType]::ParameterName, 'Write uncompressed preview pixel data to STDOUT')
-            [CompletionResult]::new('--thumbnail-pixel', '--thumbnail-pixel', [CompletionResultType]::ParameterName, 'Write uncompressed preview pixel data to STDOUT')
-            [CompletionResult]::new('--raw-checksum', '--raw-checksum', [CompletionResultType]::ParameterName, 'Write MD5 checksum of raw pixels to STDOUT')
-            [CompletionResult]::new('--full-checksum', '--full-checksum', [CompletionResultType]::ParameterName, 'Write MD5 checksum of full pixels to STDOUT')
-            [CompletionResult]::new('--preview-checksum', '--preview-checksum', [CompletionResultType]::ParameterName, 'Write MD5 checksum of preview pixels to STDOUT')
-            [CompletionResult]::new('--thumbnail-checksum', '--thumbnail-checksum', [CompletionResultType]::ParameterName, 'Write MD5 checksum of thumbnail pixels to STDOUT')
-            [CompletionResult]::new('--srgb', '--srgb', [CompletionResultType]::ParameterName, 'Write sRGB 16-bit TIFF to STDOUT')
-            [CompletionResult]::new('--meta', '--meta', [CompletionResultType]::ParameterName, 'Write metadata to STDOUT')
-            [CompletionResult]::new('--structure', '--structure', [CompletionResultType]::ParameterName, 'Write file structure to STDOUT')
-            [CompletionResult]::new('--summary', '--summary', [CompletionResultType]::ParameterName, 'Write summary information for file to STDOUT')
-            [CompletionResult]::new('--camera-profiles', '--camera-profiles', [CompletionResultType]::ParameterName, 'Write camera profiles to STDOUT (plain text, JSON or YAML)')
-            [CompletionResult]::new('--json', '--json', [CompletionResultType]::ParameterName, 'Format metadata as JSON')
-            [CompletionResult]::new('--yaml', '--yaml', [CompletionResultType]::ParameterName, 'Format metadata as YAML')
-            [CompletionResult]::new('-v', '-v', [CompletionResultType]::ParameterName, 'Print status for every file')
-            [CompletionResult]::new('-h', '-h', [CompletionResultType]::ParameterName, 'Print help (see more with ''--help'')')
-            [CompletionResult]::new('--help', '--help', [CompletionResultType]::ParameterName, 'Print help (see more with ''--help'')')
-            break
-        }
-        'dnglab;process-raw' {
-            [CompletionResult]::new('--remove-dng-opcodes', '--remove-dng-opcodes', [CompletionResultType]::ParameterName, 'Remove DNG opcodes, as comma separated [<list>:]<opcode> (e.g. WarpRectilinear,2:GainMap)')
-            [CompletionResult]::new('--artist', '--artist', [CompletionResultType]::ParameterName, 'Set the artist tag')
-            [CompletionResult]::new('--keep-mtime', '--keep-mtime', [CompletionResultType]::ParameterName, 'Keep mtime, read from EXIF with fallback to original file mtime')
-            [CompletionResult]::new('--image-index', '--image-index', [CompletionResultType]::ParameterName, 'Select a specific image index (or ''all'') if file is a image container')
-            [CompletionResult]::new('--crop', '--crop', [CompletionResultType]::ParameterName, 'Crop of the image: DefaultCrop (best), ActiveArea or none')
-            [CompletionResult]::new('--format', '--format', [CompletionResultType]::ParameterName, 'Output image format, defaults to the OUTPUT file extension or tif')
-            [CompletionResult]::new('--color-space', '--color-space', [CompletionResultType]::ParameterName, 'Color space of the image')
-            [CompletionResult]::new('--jpeg-quality', '--jpeg-quality', [CompletionResultType]::ParameterName, 'JPEG quality (1-100)')
-            [CompletionResult]::new('--denoise-luma', '--denoise-luma', [CompletionResultType]::ParameterName, 'Strength of the luma noise reduction (0-4), 0 is off, 1 is a full reduction [default: 0.25]')
-            [CompletionResult]::new('--denoise-chroma', '--denoise-chroma', [CompletionResultType]::ParameterName, 'Strength of the chroma noise reduction (0-4), 0 is off, 1 is a full reduction [default: 0.5]')
-            [CompletionResult]::new('--sharpen', '--sharpen', [CompletionResultType]::ParameterName, 'Strength of the sharpening (0-2), 0 is off, 1 is the classic Laplacian filter [default: 0.2]')
-            [CompletionResult]::new('--exposure', '--exposure', [CompletionResultType]::ParameterName, 'Change the exposure by this value in EV, e.g. -1.2. A negative value keeps white [default: 0]')
-            [CompletionResult]::new('--steps', '--steps', [CompletionResultType]::ParameterName, 'Apply only these processing steps of the rendering, as comma separated list. Without it the default steps are applied')
-            [CompletionResult]::new('--skip-steps', '--skip-steps', [CompletionResultType]::ParameterName, 'Skip these processing steps of the rendering, as comma separated list (e.g. tonecurve,denoise,sharpen). Takes priority over --steps')
-            [CompletionResult]::new('-d', '-d', [CompletionResultType]::ParameterName, 'Log level')
-            [CompletionResult]::new('--loglevel', '--loglevel', [CompletionResultType]::ParameterName, 'Log level')
-            [CompletionResult]::new('--profile-path', '--profile-path', [CompletionResultType]::ParameterName, 'Directory with profile TOML files')
-            [CompletionResult]::new('--config', '--config', [CompletionResultType]::ParameterName, 'dnglab configuration file')
-            [CompletionResult]::new('--crop-transparent', '--crop-transparent', [CompletionResultType]::ParameterName, 'Crop to the largest rectangle without transparent pixels of the DNG transparency mask')
-            [CompletionResult]::new('--auto-exposure', '--auto-exposure', [CompletionResultType]::ParameterName, 'Correct the exposure by an estimate from the image, --exposure is added to it')
-            [CompletionResult]::new('-f', '-f', [CompletionResultType]::ParameterName, 'Override existing files')
-            [CompletionResult]::new('--override', '--override', [CompletionResultType]::ParameterName, 'Override existing files')
-            [CompletionResult]::new('-r', '-r', [CompletionResultType]::ParameterName, 'Process input directory recursive')
-            [CompletionResult]::new('--recursive', '--recursive', [CompletionResultType]::ParameterName, 'Process input directory recursive')
-            [CompletionResult]::new('-v', '-v', [CompletionResultType]::ParameterName, 'Print status for every file')
-            [CompletionResult]::new('-h', '-h', [CompletionResultType]::ParameterName, 'Print help (see more with ''--help'')')
-            [CompletionResult]::new('--help', '--help', [CompletionResultType]::ParameterName, 'Print help (see more with ''--help'')')
             break
         }
         'dnglab;convert' {
@@ -120,53 +60,92 @@ Register-ArgumentCompleter -Native -CommandName 'dnglab' -ScriptBlock {
             [CompletionResult]::new('--keep-mtime', '--keep-mtime', [CompletionResultType]::ParameterName, 'Keep mtime, read from EXIF with fallback to original file mtime')
             [CompletionResult]::new('--image-index', '--image-index', [CompletionResultType]::ParameterName, 'Select a specific image index (or ''all'') if file is a image container')
             [CompletionResult]::new('--crop', '--crop', [CompletionResultType]::ParameterName, 'DNG default crop')
-            [CompletionResult]::new('-j', '-j', [CompletionResultType]::ParameterName, 'Number of files to convert in parallel (0 = auto)')
-            [CompletionResult]::new('--jobs', '--jobs', [CompletionResultType]::ParameterName, 'Number of files to convert in parallel (0 = auto)')
+            [CompletionResult]::new('--colorspace', '--colorspace', [CompletionResultType]::ParameterName, 'Colorspace of resulting DNG image')
+            [CompletionResult]::new('--render-steps', '--render-steps', [CompletionResultType]::ParameterName, 'Render pipeline steps')
+            [CompletionResult]::new('--hide-steps', '--hide-steps', [CompletionResultType]::ParameterName, 'Hide render pipeline steps')
+            [CompletionResult]::new('--denoise', '--denoise', [CompletionResultType]::ParameterName, 'Amount of denoising applied to rendered image (0.00..=4.00)')
+            [CompletionResult]::new('--sharpen', '--sharpen', [CompletionResultType]::ParameterName, 'Amount of sharpening applied to rendered image (0.00..=2.00)')
+            [CompletionResult]::new('--sharpness-radius', '--sharpness-radius', [CompletionResultType]::ParameterName, 'Radius in px of sharpening mask')
+            [CompletionResult]::new('--saturation', '--saturation', [CompletionResultType]::ParameterName, 'Change hue and saturation of the rendered image')
+            [CompletionResult]::new('--contrast', '--contrast', [CompletionResultType]::ParameterName, 'Change the exposure (+EV) and contrast of the rendered image')
+            [CompletionResult]::new('--highlight', '--highlight', [CompletionResultType]::ParameterName, 'Recover highlights (0.00..=1.00)')
+            [CompletionResult]::new('--blackpoint', '--blackpoint', [CompletionResultType]::ParameterName, 'Adjust blackpoint (0.0..=1.0)')
+            [CompletionResult]::new('--gradient', '--gradient', [CompletionResultType]::ParameterName, 'Tint the gradient along a certain axis (x y)')
+            [CompletionResult]::new('--tint', '--tint', [CompletionResultType]::ParameterName, 'Set white balance via temperature/tint')
+            [CompletionResult]::new('--whitebalance-rgb', '--whitebalance-rgb', [CompletionResultType]::ParameterName, 'Manual whitebalance RGB values')
+            [CompletionResult]::new('--exposure', '--exposure', [CompletionResultType]::ParameterName, 'Additional manual exposure adjustment in EV')
+            [CompletionResult]::new('--chromatic-aberration', '--chromatic-aberration', [CompletionResultType]::ParameterName, 'Correct chromatic aberration (0.00..=1.00)')
+            [CompletionResult]::new('--vignetting', '--vignetting', [CompletionResultType]::ParameterName, 'Correct vignetting (0.00..=1.00)')
+            [CompletionResult]::new('--distorting', '--distorting', [CompletionResultType]::ParameterName, 'Correct distortion (0.00..=1.00)')
+            [CompletionResult]::new('--camera-profile', '--camera-profile', [CompletionResultType]::ParameterName, 'Set custom camera profile')
+            [CompletionResult]::new('-t', '-t', [CompletionResultType]::ParameterName, 'Linearization table')
+            [CompletionResult]::new('--linearization', '--linearization', [CompletionResultType]::ParameterName, 'Linearization table')
+            [CompletionResult]::new('--wb', '--wb', [CompletionResultType]::ParameterName, 'Whitebalance as-shot')
+            [CompletionResult]::new('--white-xy', '--white-xy', [CompletionResultType]::ParameterName, 'Whitebalance as-shot encoded as xy chromaticity coordinates')
             [CompletionResult]::new('-d', '-d', [CompletionResultType]::ParameterName, 'Log level')
             [CompletionResult]::new('--loglevel', '--loglevel', [CompletionResultType]::ParameterName, 'Log level')
             [CompletionResult]::new('--profile-path', '--profile-path', [CompletionResultType]::ParameterName, 'Directory with profile TOML files')
             [CompletionResult]::new('--config', '--config', [CompletionResultType]::ParameterName, 'dnglab configuration file')
             [CompletionResult]::new('-f', '-f', [CompletionResultType]::ParameterName, 'Override existing files')
             [CompletionResult]::new('--override', '--override', [CompletionResultType]::ParameterName, 'Override existing files')
-            [CompletionResult]::new('-r', '-r', [CompletionResultType]::ParameterName, 'Process input directory recursive')
-            [CompletionResult]::new('--recursive', '--recursive', [CompletionResultType]::ParameterName, 'Process input directory recursive')
+            [CompletionResult]::new('-f', '-f', [CompletionResultType]::ParameterName, 'Override existing files')
+            [CompletionResult]::new('--override', '--override', [CompletionResultType]::ParameterName, 'Override existing files')
+            [CompletionResult]::new('-v', '-v', [CompletionResultType]::ParameterName, 'Print status for every file')
+            [CompletionResult]::new('-h', '-h', [CompletionResultType]::ParameterName, 'Print help (see more with ''--help'')')
+            [CompletionResult]::new('--help', '--help', [CompletionResultType]::ParameterName, 'Print help (see more with ''--help'')')
+            [CompletionResult]::new('raw', 'raw', [CompletionResultType]::ParameterValue, 'Convert raw images to DNG (deprecated: same as convert)')
+            [CompletionResult]::new('r', 'r', [CompletionResultType]::ParameterValue, 'Convert raw images to DNG (deprecated: same as convert)')
+            [CompletionResult]::new('help', 'help', [CompletionResultType]::ParameterValue, 'Print this message or the help of the given subcommand(s)')
+            break
+        }
+        'dnglab;convert;raw' {
+            [CompletionResult]::new('-d', '-d', [CompletionResultType]::ParameterName, 'Log level')
+            [CompletionResult]::new('--loglevel', '--loglevel', [CompletionResultType]::ParameterName, 'Log level')
+            [CompletionResult]::new('--profile-path', '--profile-path', [CompletionResultType]::ParameterName, 'Directory with profile TOML files')
+            [CompletionResult]::new('--config', '--config', [CompletionResultType]::ParameterName, 'dnglab configuration file')
             [CompletionResult]::new('-v', '-v', [CompletionResultType]::ParameterName, 'Print status for every file')
             [CompletionResult]::new('-h', '-h', [CompletionResultType]::ParameterName, 'Print help (see more with ''--help'')')
             [CompletionResult]::new('--help', '--help', [CompletionResultType]::ParameterName, 'Print help (see more with ''--help'')')
             break
         }
-        'dnglab;ftpserver' {
-            [CompletionResult]::new('-p', '-p', [CompletionResultType]::ParameterName, 'Convert profile name')
-            [CompletionResult]::new('--profile', '--profile', [CompletionResultType]::ParameterName, 'Convert profile name')
-            [CompletionResult]::new('-c', '-c', [CompletionResultType]::ParameterName, 'Compression for raw image')
-            [CompletionResult]::new('--compression', '--compression', [CompletionResultType]::ParameterName, 'Compression for raw image')
-            [CompletionResult]::new('--ljpeg92-predictor', '--ljpeg92-predictor', [CompletionResultType]::ParameterName, 'LJPEG-92 predictor')
-            [CompletionResult]::new('--lossy-jpeg-quality', '--lossy-jpeg-quality', [CompletionResultType]::ParameterName, 'JPEG quality for lossy compression (1-100)')
-            [CompletionResult]::new('--jxl-distance', '--jxl-distance', [CompletionResultType]::ParameterName, 'JPEG XL distance (0-25), 0 is lossless')
-            [CompletionResult]::new('--jxl-effort', '--jxl-effort', [CompletionResultType]::ParameterName, 'JPEG XL encoder effort (1-9)')
-            [CompletionResult]::new('--jxl-decode-speed', '--jxl-decode-speed', [CompletionResultType]::ParameterName, 'JPEG XL decoding speed for lossy compression (1-4)')
-            [CompletionResult]::new('--dng-preview', '--dng-preview', [CompletionResultType]::ParameterName, 'DNG include preview image')
-            [CompletionResult]::new('--dng-thumbnail', '--dng-thumbnail', [CompletionResultType]::ParameterName, 'DNG include thumbnail image')
-            [CompletionResult]::new('--dng-force-preview', '--dng-force-preview', [CompletionResultType]::ParameterName, 'Generate DNG preview image from raw data')
-            [CompletionResult]::new('--dng-force-thumbnail', '--dng-force-thumbnail', [CompletionResultType]::ParameterName, 'Generate DNG thumbnail image from raw data')
-            [CompletionResult]::new('--max-dng-backward-version', '--max-dng-backward-version', [CompletionResultType]::ParameterName, 'Maximum DNG backward version')
-            [CompletionResult]::new('--embed-raw', '--embed-raw', [CompletionResultType]::ParameterName, 'Embed the raw file into DNG')
-            [CompletionResult]::new('--apply-dng-opcodes', '--apply-dng-opcodes', [CompletionResultType]::ParameterName, 'Apply DNG opcode lists to the image data instead of writing them to the DNG')
-            [CompletionResult]::new('--remove-dng-opcodes', '--remove-dng-opcodes', [CompletionResultType]::ParameterName, 'Remove DNG opcodes, as comma separated [<list>:]<opcode> (e.g. WarpRectilinear,2:GainMap)')
-            [CompletionResult]::new('--artist', '--artist', [CompletionResultType]::ParameterName, 'Set the artist tag')
-            [CompletionResult]::new('--copyright', '--copyright', [CompletionResultType]::ParameterName, 'Set the copyright tag')
-            [CompletionResult]::new('--keep-mtime', '--keep-mtime', [CompletionResultType]::ParameterName, 'Keep mtime, read from EXIF with fallback to original file mtime')
-            [CompletionResult]::new('--image-index', '--image-index', [CompletionResultType]::ParameterName, 'Select a specific image index (or ''all'') if file is a image container')
-            [CompletionResult]::new('--crop', '--crop', [CompletionResultType]::ParameterName, 'DNG default crop')
-            [CompletionResult]::new('--port', '--port', [CompletionResultType]::ParameterName, 'FTP listen port')
-            [CompletionResult]::new('--listen', '--listen', [CompletionResultType]::ParameterName, 'FTP listen address')
-            [CompletionResult]::new('--keep-original', '--keep-original', [CompletionResultType]::ParameterName, 'Keep original raw')
+        'dnglab;convert;r' {
             [CompletionResult]::new('-d', '-d', [CompletionResultType]::ParameterName, 'Log level')
             [CompletionResult]::new('--loglevel', '--loglevel', [CompletionResultType]::ParameterName, 'Log level')
             [CompletionResult]::new('--profile-path', '--profile-path', [CompletionResultType]::ParameterName, 'Directory with profile TOML files')
             [CompletionResult]::new('--config', '--config', [CompletionResultType]::ParameterName, 'dnglab configuration file')
-            [CompletionResult]::new('-f', '-f', [CompletionResultType]::ParameterName, 'Override existing files')
-            [CompletionResult]::new('--override', '--override', [CompletionResultType]::ParameterName, 'Override existing files')
+            [CompletionResult]::new('-v', '-v', [CompletionResultType]::ParameterName, 'Print status for every file')
+            [CompletionResult]::new('-h', '-h', [CompletionResultType]::ParameterName, 'Print help (see more with ''--help'')')
+            [CompletionResult]::new('--help', '--help', [CompletionResultType]::ParameterName, 'Print help (see more with ''--help'')')
+            break
+        }
+        'dnglab;convert;help' {
+            [CompletionResult]::new('raw', 'raw', [CompletionResultType]::ParameterValue, 'Convert raw images to DNG (deprecated: same as convert)')
+            [CompletionResult]::new('help', 'help', [CompletionResultType]::ParameterValue, 'Print this message or the help of the given subcommand(s)')
+            break
+        }
+        'dnglab;convert;help;raw' {
+            break
+        }
+        'dnglab;convert;help;help' {
+            break
+        }
+        'dnglab;reembed' {
+            [CompletionResult]::new('--dng', '--dng', [CompletionResultType]::ParameterName, 'Input DNG file')
+            [CompletionResult]::new('--preview', '--preview', [CompletionResultType]::ParameterName, 'Edited preview JPEG')
+            [CompletionResult]::new('--output', '--output', [CompletionResultType]::ParameterName, 'Output DNG (default: overwrite input)')
+            [CompletionResult]::new('--embed-raw', '--embed-raw', [CompletionResultType]::ParameterName, 'Embed original raw file')
+            [CompletionResult]::new('--compression', '--compression', [CompletionResultType]::ParameterName, 'Compression method for raw image')
+            [CompletionResult]::new('--crop', '--crop', [CompletionResultType]::ParameterName, 'Crop mode: best, activearea, none')
+            [CompletionResult]::new('--predictor', '--predictor', [CompletionResultType]::ParameterName, 'LJPEG92 predictor (1-7)')
+            [CompletionResult]::new('--preview-enabled', '--preview-enabled', [CompletionResultType]::ParameterName, 'Include preview in output DNG')
+            [CompletionResult]::new('--thumbnail-enabled', '--thumbnail-enabled', [CompletionResultType]::ParameterName, 'Include thumbnail in output DNG')
+            [CompletionResult]::new('--artist', '--artist', [CompletionResultType]::ParameterName, 'Set artist tag')
+            [CompletionResult]::new('--seed', '--seed', [CompletionResultType]::ParameterName, 'Deterministic seed for output bytes')
+            [CompletionResult]::new('-d', '-d', [CompletionResultType]::ParameterName, 'Log level')
+            [CompletionResult]::new('--loglevel', '--loglevel', [CompletionResultType]::ParameterName, 'Log level')
+            [CompletionResult]::new('--profile-path', '--profile-path', [CompletionResultType]::ParameterName, 'Directory with profile TOML files')
+            [CompletionResult]::new('--config', '--config', [CompletionResultType]::ParameterName, 'dnglab configuration file')
+            [CompletionResult]::new('--compress', '--compress', [CompletionResultType]::ParameterName, 'Use lossless compression')
             [CompletionResult]::new('-v', '-v', [CompletionResultType]::ParameterName, 'Print status for every file')
             [CompletionResult]::new('-h', '-h', [CompletionResultType]::ParameterName, 'Print help (see more with ''--help'')')
             [CompletionResult]::new('--help', '--help', [CompletionResultType]::ParameterName, 'Print help (see more with ''--help'')')
@@ -194,101 +173,28 @@ Register-ArgumentCompleter -Native -CommandName 'dnglab' -ScriptBlock {
             [CompletionResult]::new('--help', '--help', [CompletionResultType]::ParameterName, 'Print help (see more with ''--help'')')
             break
         }
-        'dnglab;makedng' {
-            [CompletionResult]::new('-o', '-o', [CompletionResultType]::ParameterName, 'Output DNG file path')
-            [CompletionResult]::new('--output', '--output', [CompletionResultType]::ParameterName, 'Output DNG file path')
-            [CompletionResult]::new('-i', '-i', [CompletionResultType]::ParameterName, 'Input files (raw, preview, exif, ...), index for map starts with 0')
-            [CompletionResult]::new('--input', '--input', [CompletionResultType]::ParameterName, 'Input files (raw, preview, exif, ...), index for map starts with 0')
-            [CompletionResult]::new('--map', '--map', [CompletionResultType]::ParameterName, 'Input usage map')
-            [CompletionResult]::new('--dng-backward-version', '--dng-backward-version', [CompletionResultType]::ParameterName, 'DNG specification version')
-            [CompletionResult]::new('--colorimetric-reference', '--colorimetric-reference', [CompletionResultType]::ParameterName, 'Reference for XYZ values')
-            [CompletionResult]::new('--unique-camera-model', '--unique-camera-model', [CompletionResultType]::ParameterName, 'Unique camera model')
-            [CompletionResult]::new('--artist', '--artist', [CompletionResultType]::ParameterName, 'Set the Artist tag')
-            [CompletionResult]::new('--make', '--make', [CompletionResultType]::ParameterName, 'Set the Make tag')
-            [CompletionResult]::new('--model', '--model', [CompletionResultType]::ParameterName, 'Set the Model tag')
-            [CompletionResult]::new('--matrix1', '--matrix1', [CompletionResultType]::ParameterName, 'Matrix 1')
-            [CompletionResult]::new('--matrix2', '--matrix2', [CompletionResultType]::ParameterName, 'Matrix 2')
-            [CompletionResult]::new('--matrix3', '--matrix3', [CompletionResultType]::ParameterName, 'Matrix 3')
-            [CompletionResult]::new('--illuminant1', '--illuminant1', [CompletionResultType]::ParameterName, 'Illuminant 1')
-            [CompletionResult]::new('--illuminant2', '--illuminant2', [CompletionResultType]::ParameterName, 'Illuminant 2')
-            [CompletionResult]::new('--illuminant3', '--illuminant3', [CompletionResultType]::ParameterName, 'Illuminant 3')
-            [CompletionResult]::new('--linearization', '--linearization', [CompletionResultType]::ParameterName, 'Linearization table')
-            [CompletionResult]::new('--wb', '--wb', [CompletionResultType]::ParameterName, 'Whitebalance as-shot')
-            [CompletionResult]::new('--white-xy', '--white-xy', [CompletionResultType]::ParameterName, 'Whitebalance as-shot encoded as xy chromaticity coordinates')
-            [CompletionResult]::new('-d', '-d', [CompletionResultType]::ParameterName, 'Log level')
-            [CompletionResult]::new('--loglevel', '--loglevel', [CompletionResultType]::ParameterName, 'Log level')
-            [CompletionResult]::new('--profile-path', '--profile-path', [CompletionResultType]::ParameterName, 'Directory with profile TOML files')
-            [CompletionResult]::new('--config', '--config', [CompletionResultType]::ParameterName, 'dnglab configuration file')
-            [CompletionResult]::new('-f', '-f', [CompletionResultType]::ParameterName, 'Override existing files')
-            [CompletionResult]::new('--override', '--override', [CompletionResultType]::ParameterName, 'Override existing files')
-            [CompletionResult]::new('-v', '-v', [CompletionResultType]::ParameterName, 'Print status for every file')
-            [CompletionResult]::new('-h', '-h', [CompletionResultType]::ParameterName, 'Print help (see more with ''--help'')')
-            [CompletionResult]::new('--help', '--help', [CompletionResultType]::ParameterName, 'Print help (see more with ''--help'')')
-            break
-        }
-        'dnglab;gui' {
-            [CompletionResult]::new('-d', '-d', [CompletionResultType]::ParameterName, 'Log level')
-            [CompletionResult]::new('--loglevel', '--loglevel', [CompletionResultType]::ParameterName, 'Log level')
-            [CompletionResult]::new('--profile-path', '--profile-path', [CompletionResultType]::ParameterName, 'Directory with profile TOML files')
-            [CompletionResult]::new('--config', '--config', [CompletionResultType]::ParameterName, 'dnglab configuration file')
-            [CompletionResult]::new('-v', '-v', [CompletionResultType]::ParameterName, 'Print status for every file')
-            [CompletionResult]::new('-h', '-h', [CompletionResultType]::ParameterName, 'Print help (see more with ''--help'')')
-            [CompletionResult]::new('--help', '--help', [CompletionResultType]::ParameterName, 'Print help (see more with ''--help'')')
-            break
-        }
-        'dnglab;extract' {
-            [CompletionResult]::new('-d', '-d', [CompletionResultType]::ParameterName, 'Log level')
-            [CompletionResult]::new('--loglevel', '--loglevel', [CompletionResultType]::ParameterName, 'Log level')
-            [CompletionResult]::new('--profile-path', '--profile-path', [CompletionResultType]::ParameterName, 'Directory with profile TOML files')
-            [CompletionResult]::new('--config', '--config', [CompletionResultType]::ParameterName, 'dnglab configuration file')
-            [CompletionResult]::new('--skipchecks', '--skipchecks', [CompletionResultType]::ParameterName, 'Skip integrity checks')
-            [CompletionResult]::new('-r', '-r', [CompletionResultType]::ParameterName, 'Process input directory recursive')
-            [CompletionResult]::new('--recursive', '--recursive', [CompletionResultType]::ParameterName, 'Process input directory recursive')
-            [CompletionResult]::new('-f', '-f', [CompletionResultType]::ParameterName, 'Override existing files')
-            [CompletionResult]::new('--override', '--override', [CompletionResultType]::ParameterName, 'Override existing files')
-            [CompletionResult]::new('-v', '-v', [CompletionResultType]::ParameterName, 'Print status for every file')
-            [CompletionResult]::new('-h', '-h', [CompletionResultType]::ParameterName, 'Print help (see more with ''--help'')')
-            [CompletionResult]::new('--help', '--help', [CompletionResultType]::ParameterName, 'Print help (see more with ''--help'')')
-            break
-        }
         'dnglab;help' {
-            [CompletionResult]::new('analyze', 'analyze', [CompletionResultType]::ParameterValue, 'Analyze raw image')
-            [CompletionResult]::new('process-raw', 'process-raw', [CompletionResultType]::ParameterValue, 'process-raw')
             [CompletionResult]::new('convert', 'convert', [CompletionResultType]::ParameterValue, 'Convert raw image(s) into dng format')
-            [CompletionResult]::new('ftpserver', 'ftpserver', [CompletionResultType]::ParameterValue, 'Convert raw image(s) into dng format')
+            [CompletionResult]::new('reembed', 'reembed', [CompletionResultType]::ParameterValue, 'Re-embed edited preview into an existing DNG')
             [CompletionResult]::new('cameras', 'cameras', [CompletionResultType]::ParameterValue, 'List supported cameras')
             [CompletionResult]::new('lenses', 'lenses', [CompletionResultType]::ParameterValue, 'List supported lenses')
-            [CompletionResult]::new('makedng', 'makedng', [CompletionResultType]::ParameterValue, 'Lowlevel command to make a DNG file')
-            [CompletionResult]::new('gui', 'gui', [CompletionResultType]::ParameterValue, 'Start GUI (not implemented)')
-            [CompletionResult]::new('extract', 'extract', [CompletionResultType]::ParameterValue, 'Extract embedded original Raw from DNG')
             [CompletionResult]::new('help', 'help', [CompletionResultType]::ParameterValue, 'Print this message or the help of the given subcommand(s)')
             break
         }
-        'dnglab;help;analyze' {
-            break
-        }
-        'dnglab;help;process-raw' {
-            break
-        }
         'dnglab;help;convert' {
+            [CompletionResult]::new('raw', 'raw', [CompletionResultType]::ParameterValue, 'Convert raw images to DNG (deprecated: same as convert)')
             break
         }
-        'dnglab;help;ftpserver' {
+        'dnglab;help;convert;raw' {
+            break
+        }
+        'dnglab;help;reembed' {
             break
         }
         'dnglab;help;cameras' {
             break
         }
         'dnglab;help;lenses' {
-            break
-        }
-        'dnglab;help;makedng' {
-            break
-        }
-        'dnglab;help;gui' {
-            break
-        }
-        'dnglab;help;extract' {
             break
         }
         'dnglab;help;help' {

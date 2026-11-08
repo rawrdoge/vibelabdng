@@ -4,7 +4,7 @@
 .SH NAME
 dnglab\-convert \- Convert raw image(s) into dng format
 .SH SYNOPSIS
-\fBdnglab\-convert\fR [\fB\-p\fR|\fB\-\-profile\fR] [\fB\-c\fR|\fB\-\-compression\fR] [\fB\-\-ljpeg92\-predictor\fR] [\fB\-\-lossy\-jpeg\-quality\fR] [\fB\-\-jxl\-distance\fR] [\fB\-\-jxl\-effort\fR] [\fB\-\-jxl\-decode\-speed\fR] [\fB\-\-dng\-preview\fR] [\fB\-\-dng\-thumbnail\fR] [\fB\-\-dng\-force\-preview\fR] [\fB\-\-dng\-force\-thumbnail\fR] [\fB\-\-max\-dng\-backward\-version\fR] [\fB\-\-embed\-raw\fR] [\fB\-\-apply\-dng\-opcodes\fR] [\fB\-\-remove\-dng\-opcodes\fR] [\fB\-\-artist\fR] [\fB\-\-copyright\fR] [\fB\-\-keep\-mtime\fR] [\fB\-\-image\-index\fR] [\fB\-\-crop\fR] [\fB\-f\fR|\fB\-\-override\fR] [\fB\-r\fR|\fB\-\-recursive\fR] [\fB\-j\fR|\fB\-\-jobs\fR] [\fB\-h\fR|\fB\-\-help\fR] <\fIINPUT\fR> <\fIOUTPUT\fR> 
+\fBdnglab\-convert\fR [\fB\-p\fR|\fB\-\-profile\fR] [\fB\-c\fR|\fB\-\-compression\fR] [\fB\-\-ljpeg92\-predictor\fR] [\fB\-\-lossy\-jpeg\-quality\fR] [\fB\-\-jxl\-distance\fR] [\fB\-\-jxl\-effort\fR] [\fB\-\-jxl\-decode\-speed\fR] [\fB\-\-dng\-preview\fR] [\fB\-\-dng\-thumbnail\fR] [\fB\-\-dng\-force\-preview\fR] [\fB\-\-dng\-force\-thumbnail\fR] [\fB\-\-max\-dng\-backward\-version\fR] [\fB\-\-embed\-raw\fR] [\fB\-\-apply\-dng\-opcodes\fR] [\fB\-\-remove\-dng\-opcodes\fR] [\fB\-\-artist\fR] [\fB\-\-copyright\fR] [\fB\-\-keep\-mtime\fR] [\fB\-\-image\-index\fR] [\fB\-\-crop\fR] [\fB\-f\fR|\fB\-\-override\fR] [\fB\-\-colorspace\fR] [\fB\-\-render\-steps\fR] [\fB\-\-hide\-steps\fR] [\fB\-\-denoise\fR] [\fB\-\-sharpen\fR] [\fB\-\-sharpness\-radius\fR] [\fB\-\-saturation\fR] [\fB\-\-contrast\fR] [\fB\-\-highlight\fR] [\fB\-\-blackpoint\fR] [\fB\-\-gradient\fR] [\fB\-\-tint\fR] [\fB\-\-whitebalance\-rgb\fR] [\fB\-\-exposure\fR] [\fB\-\-chromatic\-aberration\fR] [\fB\-\-vignetting\fR] [\fB\-\-distorting\fR] [\fB\-\-camera\-profile\fR] [\fB\-t\fR|\fB\-\-linearization\fR] [\fB\-\-wb\fR] [\fB\-\-white\-xy\fR] [\fB\-f\fR|\fB\-\-override\fR] [\fB\-h\fR|\fB\-\-help\fR] <\fIINPUT\fR> <\fIOUTPUT\fR> [\fIsubcommands\fR]
 .SH DESCRIPTION
 Convert raw image(s) into dng format
 .SH OPTIONS
@@ -203,11 +203,163 @@ none
 \fB\-f\fR, \fB\-\-override\fR
 Override existing files
 .TP
-\fB\-r\fR, \fB\-\-recursive\fR
-Process input directory recursive
+\fB\-\-colorspace\fR \fI<COLORSPACE>\fR [default: srgb]
+The colorspace the resulting DNG file will have. This includes setting the color matrices if not done in the profile.
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+srgb
+.IP \(bu 2
+adobergb
+.IP \(bu 2
+prophoto
+.RE
 .TP
-\fB\-j\fR, \fB\-\-jobs\fR \fI<N>\fR [default: 0]
-Number of files to convert in parallel (0 = auto)
+\fB\-\-render\-steps\fR \fI<steps>\fR
+Render pipeline steps
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+rescale
+.IP \(bu 2
+demosaic
+.IP \(bu 2
+fujirotate
+.IP \(bu 2
+cropactivearea
+.IP \(bu 2
+baselineexposure
+.IP \(bu 2
+whitebalance
+.IP \(bu 2
+autowhitebalance
+.IP \(bu 2
+calibrate
+.IP \(bu 2
+profilerender
+.IP \(bu 2
+tonecurve
+.IP \(bu 2
+cropdefault
+.IP \(bu 2
+denoise
+.IP \(bu 2
+defaultscale
+.IP \(bu 2
+exposure
+.IP \(bu 2
+autoexposure
+.IP \(bu 2
+sharpen
+.IP \(bu 2
+transferfunction
+.RE
+.TP
+\fB\-\-hide\-steps\fR \fI<steps>\fR
+Hide render pipeline steps
+.br
+
+.br
+\fIPossible values:\fR
+.RS 14
+.IP \(bu 2
+rescale
+.IP \(bu 2
+demosaic
+.IP \(bu 2
+fujirotate
+.IP \(bu 2
+cropactivearea
+.IP \(bu 2
+baselineexposure
+.IP \(bu 2
+whitebalance
+.IP \(bu 2
+autowhitebalance
+.IP \(bu 2
+calibrate
+.IP \(bu 2
+profilerender
+.IP \(bu 2
+tonecurve
+.IP \(bu 2
+cropdefault
+.IP \(bu 2
+denoise
+.IP \(bu 2
+defaultscale
+.IP \(bu 2
+exposure
+.IP \(bu 2
+autoexposure
+.IP \(bu 2
+sharpen
+.IP \(bu 2
+transferfunction
+.RE
+.TP
+\fB\-\-denoise\fR \fI<strength>\fR
+Amount of denoising applied to rendered image (0.00..=4.00)
+.TP
+\fB\-\-sharpen\fR \fI<strength>\fR [default: 0.2]
+Amount of sharpening applied to rendered image (0.00..=2.00)
+.TP
+\fB\-\-sharpness\-radius\fR \fI<radius>\fR [default: 0.5]
+Radius in px of sharpening mask
+.TP
+\fB\-\-saturation\fR \fI<hue_saturation>...\fR
+Change hue and saturation of the rendered image
+.TP
+\fB\-\-contrast\fR \fI<exposure_contrast>...\fR
+Change the exposure (+EV) and contrast of the rendered image
+.TP
+\fB\-\-highlight\fR \fI<highlight>\fR
+Recover highlights (0.00..=1.00)
+.TP
+\fB\-\-blackpoint\fR \fI<blackpoint>\fR
+Adjust blackpoint (0.0..=1.0)
+.TP
+\fB\-\-gradient\fR \fI<tint_gradient>...\fR
+Tint the gradient along a certain axis (x y)
+.TP
+\fB\-\-tint\fR \fI<temperature_tint>...\fR
+Set white balance via temperature/tint
+.TP
+\fB\-\-whitebalance\-rgb\fR \fI<rgb>...\fR
+Manual whitebalance RGB values
+.TP
+\fB\-\-exposure\fR \fI<exposure>\fR
+Additional manual exposure adjustment in EV
+.TP
+\fB\-\-chromatic\-aberration\fR \fI<correction>\fR
+Correct chromatic aberration (0.00..=1.00)
+.TP
+\fB\-\-vignetting\fR \fI<amount>\fR
+Correct vignetting (0.00..=1.00)
+.TP
+\fB\-\-distorting\fR \fI<amount>\fR
+Correct distortion (0.00..=1.00)
+.TP
+\fB\-\-camera\-profile\fR \fI<PROFILE>\fR
+Set custom camera profile
+.TP
+\fB\-t\fR, \fB\-\-linearization\fR \fI<path>\fR
+Linearization table
+.TP
+\fB\-\-wb\fR \fI<R,G,B>...\fR
+Whitebalance as\-shot
+.TP
+\fB\-\-white\-xy\fR \fI<x,y>...\fR
+Whitebalance as\-shot encoded as xy chromaticity coordinates
+.TP
+\fB\-f\fR, \fB\-\-override\fR
+Override existing files
 .TP
 \fB\-h\fR, \fB\-\-help\fR
 Print help (see a summary with \*(Aq\-h\*(Aq)
@@ -217,3 +369,10 @@ Input file or directory
 .TP
 <\fIOUTPUT\fR>
 Output file or existing directory
+.SH SUBCOMMANDS
+.TP
+dnglab\-convert\-raw(1)
+Convert raw images to DNG (deprecated: same as convert)
+.TP
+dnglab\-convert\-help(1)
+Print this message or the help of the given subcommand(s)
