@@ -84,6 +84,7 @@ async fn main_async() -> dnglab_lib::Result<()> {
     Some(("lenses", sc)) => lenses::lenses(sc).await,
     Some(("cameras", sc)) => cameras::cameras(sc).await,
     Some(("gui", sc)) => gui::gui(sc).await,
+    Some(("reembed", sc)) => reembed::reembed(sc),
     _ => Err(AppError::InvalidCmdSwitch("Unknown subcommand was used".into())),
   }
 }

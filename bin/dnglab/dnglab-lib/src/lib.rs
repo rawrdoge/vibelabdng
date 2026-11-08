@@ -24,6 +24,7 @@ pub mod jobs;
 pub mod lenses;
 pub mod makedng;
 pub mod process_raw;
+pub mod reembed;
 
 const PKG_VERSION: &str = env!("CARGO_PKG_VERSION");
 const PKG_NAME: &str = env!("CARGO_PKG_NAME");
