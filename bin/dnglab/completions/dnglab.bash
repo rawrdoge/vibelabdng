@@ -16,20 +16,32 @@ _dnglab() {
             ",$1")
                 cmd="dnglab"
                 ;;
+            dnglab,cameras)
+                cmd="dnglab__cameras"
+                ;;
             dnglab,convert)
                 cmd="dnglab__convert"
                 ;;
             dnglab,help)
                 cmd="dnglab__help"
                 ;;
+            dnglab,lenses)
+                cmd="dnglab__lenses"
+                ;;
             dnglab,reembed)
                 cmd="dnglab__reembed"
+                ;;
+            dnglab__help,cameras)
+                cmd="dnglab__help__cameras"
                 ;;
             dnglab__help,convert)
                 cmd="dnglab__help__convert"
                 ;;
             dnglab__help,help)
                 cmd="dnglab__help__help"
+                ;;
+            dnglab__help,lenses)
+                cmd="dnglab__help__lenses"
                 ;;
             dnglab__help,reembed)
                 cmd="dnglab__help__reembed"
@@ -41,8 +53,30 @@ _dnglab() {
 
     case "${cmd}" in
         dnglab)
-            opts="-d -v -h -V --loglevel --help --version convert reembed help"
+            opts="-d -v -h -V --loglevel --help --version convert cameras lenses reembed help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 1 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                --loglevel)
+                    COMPREPLY=($(compgen -W "error warn info debug trace" -- "${cur}"))
+                    return 0
+                    ;;
+                -d)
+                    COMPREPLY=($(compgen -W "error warn info debug trace" -- "${cur}"))
+                    return 0
+                    ;;
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        dnglab__cameras)
+            opts="-d -v -h --md --loglevel --help"
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
@@ -118,7 +152,7 @@ _dnglab() {
                     return 0
                     ;;
                 --dng-version)
-                    COMPREPLY=($(compgen -W "v1-4 v1-5 v1-6" -- "${cur}"))
+                    COMPREPLY=($(compgen -W "1.4 1.5 1.6" -- "${cur}"))
                     return 0
                     ;;
                 --preview-medium)
@@ -165,8 +199,22 @@ _dnglab() {
             return 0
             ;;
         dnglab__help)
-            opts="convert reembed help"
+            opts="convert cameras lenses reembed help"
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        dnglab__help__cameras)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
                 COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
                 return 0
             fi
@@ -206,6 +254,20 @@ _dnglab() {
             COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
             return 0
             ;;
+        dnglab__help__lenses)
+            opts=""
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
         dnglab__help__reembed)
             opts=""
             if [[ ${cur} == -* || ${COMP_CWORD} -eq 3 ]] ; then
@@ -213,6 +275,28 @@ _dnglab() {
                 return 0
             fi
             case "${prev}" in
+                *)
+                    COMPREPLY=()
+                    ;;
+            esac
+            COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+            return 0
+            ;;
+        dnglab__lenses)
+            opts="-d -v -h --md --loglevel --help"
+            if [[ ${cur} == -* || ${COMP_CWORD} -eq 2 ]] ; then
+                COMPREPLY=( $(compgen -W "${opts}" -- "${cur}") )
+                return 0
+            fi
+            case "${prev}" in
+                --loglevel)
+                    COMPREPLY=($(compgen -W "error warn info debug trace" -- "${cur}"))
+                    return 0
+                    ;;
+                -d)
+                    COMPREPLY=($(compgen -W "error warn info debug trace" -- "${cur}"))
+                    return 0
+                    ;;
                 *)
                     COMPREPLY=()
                     ;;

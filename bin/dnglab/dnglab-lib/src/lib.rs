@@ -9,9 +9,11 @@ use thiserror::Error;
 //use log::debug;
 
 pub mod app;
+pub mod cameras;
 pub mod convert;
 pub mod filemap;
 pub mod jobs;
+pub mod lenses;
 pub mod reembed;
 
 const PKG_VERSION: &str = env!("CARGO_PKG_VERSION");

@@ -87,6 +87,8 @@ async fn main_async() -> dnglab_lib::Result<()> {
   match matches.subcommand() {
     Some(("convert", sc)) => convert::convert(sc).await,
     Some(("reembed", sc)) => reembed::reembed(sc),
+    Some(("cameras", sc)) => cameras::cameras(sc).await,
+    Some(("lenses", sc)) => lenses::lenses(sc).await,
     _ => Err(AppError::InvalidCmdSwitch("Unknown subcommand was used".into())),
   }
 }

@@ -26,6 +26,8 @@ set edit:completion:arg-completer[dnglab] = {|@words|
             cand -V 'Print version'
             cand --version 'Print version'
             cand convert 'Convert raw image(s) into dng format'
+            cand cameras 'List supported cameras'
+            cand lenses 'List supported lenses'
             cand reembed 'Re-embed an edited preview JPEG into an existing DNG (preserves raw/metadata)'
             cand help 'Print this message or the help of the given subcommand(s)'
         }
@@ -60,6 +62,22 @@ set edit:completion:arg-completer[dnglab] = {|@words|
             cand -h 'Print help'
             cand --help 'Print help'
         }
+        &'dnglab;cameras'= {
+            cand -d 'Log level'
+            cand --loglevel 'Log level'
+            cand --md 'Markdown format output'
+            cand -v 'Print status for every file'
+            cand -h 'Print help'
+            cand --help 'Print help'
+        }
+        &'dnglab;lenses'= {
+            cand -d 'Log level'
+            cand --loglevel 'Log level'
+            cand --md 'Markdown format output'
+            cand -v 'Print status for every file'
+            cand -h 'Print help'
+            cand --help 'Print help'
+        }
         &'dnglab;reembed'= {
             cand --dng 'Existing DNG file to re-embed preview into'
             cand --preview 'Edited preview JPEG to embed'
@@ -84,10 +102,16 @@ set edit:completion:arg-completer[dnglab] = {|@words|
         }
         &'dnglab;help'= {
             cand convert 'Convert raw image(s) into dng format'
+            cand cameras 'List supported cameras'
+            cand lenses 'List supported lenses'
             cand reembed 'Re-embed an edited preview JPEG into an existing DNG (preserves raw/metadata)'
             cand help 'Print this message or the help of the given subcommand(s)'
         }
         &'dnglab;help;convert'= {
+        }
+        &'dnglab;help;cameras'= {
+        }
+        &'dnglab;help;lenses'= {
         }
         &'dnglab;help;reembed'= {
         }

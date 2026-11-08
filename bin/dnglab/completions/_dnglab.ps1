@@ -29,6 +29,8 @@ Register-ArgumentCompleter -Native -CommandName 'dnglab' -ScriptBlock {
             [CompletionResult]::new('-V', '-V ', [CompletionResultType]::ParameterName, 'Print version')
             [CompletionResult]::new('--version', '--version', [CompletionResultType]::ParameterName, 'Print version')
             [CompletionResult]::new('convert', 'convert', [CompletionResultType]::ParameterValue, 'Convert raw image(s) into dng format')
+            [CompletionResult]::new('cameras', 'cameras', [CompletionResultType]::ParameterValue, 'List supported cameras')
+            [CompletionResult]::new('lenses', 'lenses', [CompletionResultType]::ParameterValue, 'List supported lenses')
             [CompletionResult]::new('reembed', 'reembed', [CompletionResultType]::ParameterValue, 'Re-embed an edited preview JPEG into an existing DNG (preserves raw/metadata)')
             [CompletionResult]::new('help', 'help', [CompletionResultType]::ParameterValue, 'Print this message or the help of the given subcommand(s)')
             break
@@ -65,6 +67,24 @@ Register-ArgumentCompleter -Native -CommandName 'dnglab' -ScriptBlock {
             [CompletionResult]::new('--help', '--help', [CompletionResultType]::ParameterName, 'Print help')
             break
         }
+        'dnglab;cameras' {
+            [CompletionResult]::new('-d', '-d', [CompletionResultType]::ParameterName, 'Log level')
+            [CompletionResult]::new('--loglevel', '--loglevel', [CompletionResultType]::ParameterName, 'Log level')
+            [CompletionResult]::new('--md', '--md', [CompletionResultType]::ParameterName, 'Markdown format output')
+            [CompletionResult]::new('-v', '-v', [CompletionResultType]::ParameterName, 'Print status for every file')
+            [CompletionResult]::new('-h', '-h', [CompletionResultType]::ParameterName, 'Print help')
+            [CompletionResult]::new('--help', '--help', [CompletionResultType]::ParameterName, 'Print help')
+            break
+        }
+        'dnglab;lenses' {
+            [CompletionResult]::new('-d', '-d', [CompletionResultType]::ParameterName, 'Log level')
+            [CompletionResult]::new('--loglevel', '--loglevel', [CompletionResultType]::ParameterName, 'Log level')
+            [CompletionResult]::new('--md', '--md', [CompletionResultType]::ParameterName, 'Markdown format output')
+            [CompletionResult]::new('-v', '-v', [CompletionResultType]::ParameterName, 'Print status for every file')
+            [CompletionResult]::new('-h', '-h', [CompletionResultType]::ParameterName, 'Print help')
+            [CompletionResult]::new('--help', '--help', [CompletionResultType]::ParameterName, 'Print help')
+            break
+        }
         'dnglab;reembed' {
             [CompletionResult]::new('--dng', '--dng', [CompletionResultType]::ParameterName, 'Existing DNG file to re-embed preview into')
             [CompletionResult]::new('--preview', '--preview', [CompletionResultType]::ParameterName, 'Edited preview JPEG to embed')
@@ -90,11 +110,19 @@ Register-ArgumentCompleter -Native -CommandName 'dnglab' -ScriptBlock {
         }
         'dnglab;help' {
             [CompletionResult]::new('convert', 'convert', [CompletionResultType]::ParameterValue, 'Convert raw image(s) into dng format')
+            [CompletionResult]::new('cameras', 'cameras', [CompletionResultType]::ParameterValue, 'List supported cameras')
+            [CompletionResult]::new('lenses', 'lenses', [CompletionResultType]::ParameterValue, 'List supported lenses')
             [CompletionResult]::new('reembed', 'reembed', [CompletionResultType]::ParameterValue, 'Re-embed an edited preview JPEG into an existing DNG (preserves raw/metadata)')
             [CompletionResult]::new('help', 'help', [CompletionResultType]::ParameterValue, 'Print this message or the help of the given subcommand(s)')
             break
         }
         'dnglab;help;convert' {
+            break
+        }
+        'dnglab;help;cameras' {
+            break
+        }
+        'dnglab;help;lenses' {
             break
         }
         'dnglab;help;reembed' {

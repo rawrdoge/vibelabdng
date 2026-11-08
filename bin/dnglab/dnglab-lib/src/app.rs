@@ -188,6 +188,18 @@ pub fn create_app() -> Command {
         .arg(arg!(INPUT_POS: <INPUT> "Input file or directory").required(false).value_parser(clap::value_parser!(PathBuf)))
         .arg(arg!(OUTPUT_POS: <OUTPUT> "Output file or existing directory").required(false).value_parser(clap::value_parser!(PathBuf))),
     )
+    .subcommand(
+      Command::new("cameras")
+        .about("List supported cameras")
+        .arg_required_else_help(false)
+        .arg(arg!(markdown: --md "Markdown format output").action(ArgAction::SetTrue)),
+    )
+    .subcommand(
+      Command::new("lenses")
+        .about("List supported lenses")
+        .arg_required_else_help(false)
+        .arg(arg!(markdown: --md "Markdown format output").action(ArgAction::SetTrue)),
+    )
     .subcommand(reembed_command())
 }
 
