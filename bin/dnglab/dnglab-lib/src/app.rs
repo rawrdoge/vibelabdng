@@ -14,8 +14,11 @@ use rawler::dng::{CropMode, DngCompression};
 #[derive(Clone, Copy, Debug, Default, PartialEq, Eq, clap::ValueEnum)]
 pub enum DngVersion {
     #[default]
+    #[value(name = "1.4")]
     V1_4,
+    #[value(name = "1.5")]
     V1_5,
+    #[value(name = "1.6")]
     V1_6,
 }
 
